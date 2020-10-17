@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">CaptsoneProject</string>
+    <string name="action_settings">Settings</string>
+
+
+<!--    REGISTER PAGE-->
+    <string name="btn_register">Register</string>
+    <string name="alreadyRegistered_toLogin">Already Registered Click here</string>
+
+<!--    LOGIN PAGE-->
+    <string name="btn_login">Login</string>
+    <string name="emailValidation">Email is not correct, try again</string>
+
+
+    <!--    validation checks-->
+    <string name="emailInvalidation">Email is not correct, try again</string>
+    <string name="passwordInvalidation">Password needs to be atleast 8 characters</string>
+</resources>
