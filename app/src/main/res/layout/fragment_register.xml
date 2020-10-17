@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="50dp"
         android:background="@drawable/rounded_button"
         android:text="@string/btn_register"
@@ -28,7 +29,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/rounded_edittxt_register"
         android:backgroundTint="#FFFFFF"
@@ -38,7 +39,7 @@
         android:paddingStart="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_open_picture_gallery" />
 
     <EditText
         android:id="@+id/email_edit_txt_reg"
@@ -60,7 +61,7 @@
         android:id="@+id/password_edit_txt_reg"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="39dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/rounded_edittxt_register"
         android:ems="10"
         android:hint="Password"
@@ -75,15 +76,28 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="367dp"
+        android:layout_marginBottom="136dp"
         android:text="@string/alreadyRegistered_toLogin"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btn_register"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/btn_register"
         app:layout_constraintTop_toBottomOf="@+id/btn_register" />
+
+    <Button
+        android:id="@+id/btn_open_picture_gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:alpha="0.5"
+        android:background="@drawable/rounded_profile_reg_avatar"
+        android:text="@string/select_photo"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="@+id/username_edit_txt_reg"
+        app:layout_constraintStart_toStartOf="@+id/username_edit_txt_reg"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

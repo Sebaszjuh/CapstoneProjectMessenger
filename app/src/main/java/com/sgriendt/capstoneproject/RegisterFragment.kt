@@ -1,7 +1,12 @@
 package com.sgriendt.capstoneproject
 
+import android.app.Activity
+import android.content.ContentResolver
+import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +15,6 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_register.*
 
@@ -20,6 +23,8 @@ import kotlinx.android.synthetic.main.fragment_register.*
  */
 class RegisterFragment : Fragment() {
     private val viewModel: MessengerViewModel by activityViewModels()
+
+    private var profileImageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +38,7 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         alreadyRegistered_toLogin.setOnClickListener { goToLogin() }
+        btn_open_picture_gallery.setOnClickListener { onGalleryClick() }
         btn_register.setOnClickListener { registerNewAccount() }
 
         observeUserCreation()
@@ -58,6 +64,33 @@ class RegisterFragment : Fragment() {
             findNavController().popBackStack()
         })
     }
+    private fun onGalleryClick() {
+        // Create an Intent with action as ACTION_PICK
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+
+        // Sets the type as image/*. This ensures only components of type image are selected
+        galleryIntent.type = "image/*"
+
+        // Start the activity using the gallery intent
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                GALLERY_REQUEST_CODE -> {
+                    profileImageUri = data?.data
+                    val bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, profileImageUri)
+
+                    val bitmapDrawable = BitmapDrawable(bitmap)
+                    btn_open_picture_gallery.setBackgroundDrawable(bitmapDrawable)
+                }
+            }
+        }
+    }
+
+
 
     private fun checkEmailValidation(email: String): Boolean {
         return if (email.isNullOrBlank() || !email.contains("@")) {
@@ -77,4 +110,7 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    companion object {
+        const val GALLERY_REQUEST_CODE = 100
+    }
 }
