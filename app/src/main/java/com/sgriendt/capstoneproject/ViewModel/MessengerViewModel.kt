@@ -12,18 +12,22 @@ import kotlinx.coroutines.launch
 
 class MessengerViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "FIRESTORE"
-    private val quizRepository: MessengerRepository = MessengerRepository()
+    private val messengerRepository: MessengerRepository = MessengerRepository()
 
     private val _errorText: MutableLiveData<String> = MutableLiveData()
+
+    val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
+    val loginSuccess: LiveData<Boolean> = messengerRepository.loginSuccess
+
     val errorText: LiveData<String>
         get() = _errorText
 
-    fun createUser(email:String, password:String) {
+    fun createUser(email: String, password: String) {
         // persist data to firestore
         val user = User(email, password)
         viewModelScope.launch {
             try {
-                quizRepository.createUser(user)
+                messengerRepository.createUser(user)
             } catch (ex: MessengerRepository.UserSaveError) {
                 val errorMsg = "Something went wrong while creating user"
                 Log.e(TAG, ex.message ?: errorMsg)
@@ -32,5 +36,16 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
+    fun loginUser(email: String, password: String) {
+        val user = User(email, password)
+        viewModelScope.launch {
+            try {
+                messengerRepository.signInUser(user)
+            } catch (ex: MessengerRepository.UserSaveError) {
+                val errorMsg = "Something went wrong while loging in"
+                Log.e(TAG, ex.message ?: errorMsg)
+                _errorText.value = errorMsg
+            }
+        }
+    }
 }

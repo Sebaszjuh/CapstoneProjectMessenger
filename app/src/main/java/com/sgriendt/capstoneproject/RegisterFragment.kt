@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
@@ -33,6 +34,8 @@ class RegisterFragment : Fragment() {
 
         alreadyRegistered_toLogin.setOnClickListener { goToLogin() }
         btn_register.setOnClickListener { registerNewAccount() }
+
+        observeUserCreation()
     }
 
     private fun goToLogin() {
@@ -46,9 +49,14 @@ class RegisterFragment : Fragment() {
             if (checkPasswordValidation(password)) {
                 viewModel.createUser(email, password)
             }
-
         }
+    }
 
+    private fun observeUserCreation() {
+        viewModel.createSuccess.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(activity, R.string.succes, Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
+        })
     }
 
     private fun checkEmailValidation(email: String): Boolean {
