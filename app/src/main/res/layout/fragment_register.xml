@@ -14,15 +14,15 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="50dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_button"
         android:text="@string/btn_register"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/alreadyRegistered_toLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/password_edit_txt_reg"
-        app:layout_constraintTop_toBottomOf="@+id/password_edit_txt_reg"
-        app:layout_constraintVertical_bias="0.044" />
+        app:layout_constraintTop_toBottomOf="@+id/password_edit_txt_reg" />
 
     <EditText
         android:id="@+id/username_edit_txt_reg"
@@ -76,6 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="136dp"
         android:text="@string/alreadyRegistered_toLogin"
@@ -90,8 +91,8 @@
 
     <Button
         android:id="@+id/btn_open_picture_gallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="40dp"
         android:alpha="0.5"
         android:background="@drawable/rounded_profile_reg_avatar"
@@ -100,4 +101,14 @@
         app:layout_constraintEnd_toEndOf="@+id/username_edit_txt_reg"
         app:layout_constraintStart_toStartOf="@+id/username_edit_txt_reg"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/select_photo_imageview"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_open_picture_gallery"
+        app:layout_constraintEnd_toEndOf="@+id/btn_open_picture_gallery"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="@+id/btn_open_picture_gallery"
+        app:layout_constraintTop_toTopOf="@+id/btn_open_picture_gallery" />
 </androidx.constraintlayout.widget.ConstraintLayout>

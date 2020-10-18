@@ -1,6 +1,7 @@
 package com.sgriendt.capstoneproject.ViewModel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -18,6 +19,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
 
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
     val loginSuccess: LiveData<Boolean> = messengerRepository.loginSuccess
+    val registerProfileSucces: LiveData<Boolean> = messengerRepository.registerProfileSucces
 
     val errorText: LiveData<String>
         get() = _errorText
@@ -36,12 +38,26 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+
     fun loginUser(email: String, password: String) {
         val user = User(email, password)
         viewModelScope.launch {
             try {
                 messengerRepository.signInUser(user)
             } catch (ex: MessengerRepository.UserSaveError) {
+                val errorMsg = "Something went wrong while loging in"
+                Log.e(TAG, ex.message ?: errorMsg)
+                _errorText.value = errorMsg
+            }
+        }
+    }
+
+    fun uploadURI(uri: Uri, username: String) {
+
+        viewModelScope.launch {
+            try {
+                messengerRepository.uploadURI(uri, username)
+            } catch (ex: MessengerRepository.UploadImageError) {
                 val errorMsg = "Something went wrong while loging in"
                 Log.e(TAG, ex.message ?: errorMsg)
                 _errorText.value = errorMsg

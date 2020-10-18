@@ -48,12 +48,22 @@ class RegisterFragment : Fragment() {
         findNavController().navigate(R.id.loginFragment)
     }
 
+    //TODO RETURN MESSAGE IF EMAILADDRESS IS ALREADY IN USE
+
+    //CHECK PICTURE
     private fun registerNewAccount() {
         val email = email_edit_txt_reg.text.toString()
         val password = password_edit_txt_reg.text.toString()
+        val username = username_edit_txt_reg.text.toString()
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
                 viewModel.createUser(email, password)
+                if(profileImageUri == null){
+                    return
+                } else {
+                    viewModel.uploadURI(profileImageUri!!, username)
+                }
+
             }
         }
     }
@@ -73,9 +83,9 @@ class RegisterFragment : Fragment() {
 
         // Start the activity using the gallery intent
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
-
     }
 
+    //DEPRECATED NEEDS REWORK
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
@@ -83,14 +93,14 @@ class RegisterFragment : Fragment() {
                     profileImageUri = data?.data
                     val bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, profileImageUri)
 
-                    val bitmapDrawable = BitmapDrawable(bitmap)
-                    btn_open_picture_gallery.setBackgroundDrawable(bitmapDrawable)
+                    select_photo_imageview.setImageBitmap(bitmap)
+                    btn_open_picture_gallery.alpha = 0f
+//                    val bitmapDrawable = BitmapDrawable(bitmap)
+//                    btn_open_picture_gallery.setBackgroundDrawable(bitmapDrawable)
                 }
             }
         }
     }
-
-
 
     private fun checkEmailValidation(email: String): Boolean {
         return if (email.isNullOrBlank() || !email.contains("@")) {
