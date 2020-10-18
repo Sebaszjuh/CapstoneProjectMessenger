@@ -20,6 +20,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
     val loginSuccess: LiveData<Boolean> = messengerRepository.loginSuccess
     val registerProfileSucces: LiveData<Boolean> = messengerRepository.registerProfileSucces
+    val isNotLoggedin: LiveData<Boolean> = messengerRepository.isNotLoggedIn
 
     val errorText: LiveData<String>
         get() = _errorText
@@ -58,10 +59,16 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 messengerRepository.uploadURI(uri, username)
             } catch (ex: MessengerRepository.UploadImageError) {
-                val errorMsg = "Something went wrong while loging in"
+                val errorMsg = "Something went wrong creating your profile"
                 Log.e(TAG, ex.message ?: errorMsg)
                 _errorText.value = errorMsg
             }
+        }
+    }
+
+    fun checkLogin(){
+        viewModelScope.launch {
+            messengerRepository.checkIfLoggedIn()
         }
     }
 }

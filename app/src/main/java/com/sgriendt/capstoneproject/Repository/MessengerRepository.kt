@@ -30,6 +30,10 @@ class MessengerRepository {
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _loginSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isNotLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
+
+    val isNotLoggedIn: LiveData<Boolean>
+        get() = _isNotLoggedIn
 
     val createSuccess: LiveData<Boolean>
         get() = _createSuccess
@@ -73,6 +77,13 @@ class MessengerRepository {
         }
     }
 
+    fun checkIfLoggedIn() {
+        val uid = firestoreAuth.uid
+        if (uid == null) {
+            _isNotLoggedIn.value = true;
+        }
+    }
+
     suspend fun uploadURI(uri: Uri, username: String) {
         try {
             //firestore has support for coroutines via the extra dependency we've added :)
@@ -103,7 +114,7 @@ class MessengerRepository {
                 .addOnSuccessListener {
                     _registerProfile.value = true;
                 }
-                .addOnFailureListener{
+                .addOnFailureListener {
                     _registerProfile.value = false
                 }
         } catch (e: java.lang.Exception) {
