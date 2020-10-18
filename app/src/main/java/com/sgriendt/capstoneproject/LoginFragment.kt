@@ -33,7 +33,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         btn_login_login.setOnClickListener { onLoginClick() }
 
-        observeUserCreation()
+        observeLoginSuccess()
     }
 
     private fun onLoginClick() {
@@ -46,11 +46,10 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun observeUserCreation() {
+    private fun observeLoginSuccess() {
         viewModel.loginSuccess.observe(viewLifecycleOwner, Observer {
             Toast.makeText(activity, R.string.succes, Toast.LENGTH_LONG).show()
-            //TODO Navigatie naar volgende scherm
-//            findNavController().navigate(R.id.loginFragment)
+            findNavController().navigate(R.id.latestMessageFragment)
         })
     }
 

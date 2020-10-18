@@ -3,13 +3,13 @@
     <string name="action_settings">Settings</string>
 
 
-<!--    REGISTER PAGE-->
+    <!--    REGISTER PAGE-->
     <string name="btn_register">Register</string>
     <string name="alreadyRegistered_toLogin">Already Registered Click here</string>
     <string name="succes">Successfully created user</string>
     <string name="select_photo">Select Photo</string>
 
-<!--    LOGIN PAGE-->
+    <!--    LOGIN PAGE-->
     <string name="btn_login">Login</string>
     <string name="emailValidation">Email is not correct, try again</string>
 

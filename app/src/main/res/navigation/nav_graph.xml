@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/startFragment">
+    app:startDestination="@id/latestMessageFragment">
     <fragment
         android:id="@+id/startFragment"
         android:name="com.sgriendt.capstoneproject.StartFragment"
@@ -19,10 +19,23 @@
         android:id="@+id/loginFragment"
         android:name="com.sgriendt.capstoneproject.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_latestMessageFragment"
+            app:destination="@id/latestMessageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.sgriendt.capstoneproject.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/latestMessageFragment"
+        android:name="com.sgriendt.capstoneproject.LatestMessageFragment"
+        android:label="fragment_latest_message"
+        tools:layout="@layout/activity_main" >
+        <action
+            android:id="@+id/action_latestMessageFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
 </navigation>
