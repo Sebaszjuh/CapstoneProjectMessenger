@@ -71,16 +71,17 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun fetchUsers(): List<UserInfo>? {
-        var list: List<UserInfo>? = null
+    fun fetchUsers(): List<UserInfo> {
+        var list: List<UserInfo> = emptyList()
         viewModelScope.launch {
             try{
-                list = messengerRepository.fetchUsers()
-                Log.d("List of users", "$list")
+                messengerRepository.fetchUsers()
+//                Log.d("List of users", "$list")
             } catch (e: Exception){
                 Log.d("BROKEN", "BROKEN")
             }
         }
+        Log.d("View check", list.toString())
         return list
     }
 

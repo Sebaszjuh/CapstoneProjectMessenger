@@ -62,9 +62,9 @@ class NewMessageFragment : Fragment() {
                 viewModel.fetchUsers()
             }
             this@NewMessageFragment.userList.clear()
-            if (shoppingList != null) {
-                this@NewMessageFragment.userList.addAll(shoppingList)
-            }
+
+            this@NewMessageFragment.userList.addAll(shoppingList)
+
             this@NewMessageFragment.UserInfoAdapter.notifyDataSetChanged()
         }
     }

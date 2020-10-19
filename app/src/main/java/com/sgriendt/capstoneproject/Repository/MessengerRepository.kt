@@ -20,12 +20,15 @@ import com.sgriendt.capstoneproject.UserItemAdapter
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MessengerRepository {
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var firestoreAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestoreStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val refUsers = firebaseDatabase.getReference("/users")
+    private val userItems = arrayListOf<UserInfo>()
 
     private val _user: MutableLiveData<User> = MutableLiveData()
 
@@ -147,23 +150,30 @@ class MessengerRepository {
         }
     }
 
-    fun fetchUsers():List<UserInfo>{
-        val ref = firebaseDatabase.getReference("/users")
-        val userItems = arrayListOf<UserInfo>()
+    fun fetchUsers(): List<UserInfo> {
+        var realList: List<UserInfo> = emptyList()
+        readData(object : FirebaseCallback {
+            override fun onCallback(list: List<UserInfo>) {
+                Log.d("Last check", list.toString())
+                realList = list
+            }
+        })
+        return realList
+    }
 
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+    private fun readData(firebaseCallback: FirebaseCallback) {
+        refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     val user = it.getValue(UserInfo::class.java)
-                    Log.d("Users", "$user")
                     userItems.add(user!!)
-                    Log.d("List", "$userItems")
                 }
+                firebaseCallback.onCallback(userItems)
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
-        return userItems
     }
 
     class UserSaveError(message: String, cause: Throwable) : Exception(message, cause)
@@ -172,4 +182,8 @@ class MessengerRepository {
     class UserLoginError(message: String, cause: Throwable) : Exception(message, cause)
     class UploadImageError(message: String, cause: Throwable) : Exception(message, cause)
     class RegisterProfileError(message: String, cause: Throwable) : Exception(message, cause)
+}
+
+private interface FirebaseCallback {
+    fun onCallback(list: List<UserInfo>)
 }
