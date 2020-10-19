@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.sgriendt.capstoneproject.Model.User
+import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Repository.MessengerRepository
 import kotlinx.coroutines.launch
 
@@ -68,6 +69,19 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
                 _errorText.value = errorMsg
             }
         }
+    }
+
+    fun fetchUsers(): List<UserInfo>? {
+        var list: List<UserInfo>? = null
+        viewModelScope.launch {
+            try{
+                list = messengerRepository.fetchUsers()
+                Log.d("List of users", "$list")
+            } catch (e: Exception){
+                Log.d("BROKEN", "BROKEN")
+            }
+        }
+        return list
     }
 
     fun checkLogin() {

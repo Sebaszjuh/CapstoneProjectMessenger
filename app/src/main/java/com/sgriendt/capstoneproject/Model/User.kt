@@ -11,4 +11,6 @@ data class UserInfo(
     val uid: String,
     val username: String,
     val profileImageUrl: String
-)
+){
+    constructor() : this("","","")
+}

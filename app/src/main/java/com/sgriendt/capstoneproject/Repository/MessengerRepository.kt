@@ -4,13 +4,19 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
+import com.sgriendt.capstoneproject.Model.UserItem
+import com.sgriendt.capstoneproject.UserItemAdapter
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.util.*
@@ -71,14 +77,11 @@ class MessengerRepository {
 
     suspend fun signInUser(user: User) {
         try {
-            //firestore has support for coroutines via the extra dependency we've added :)
             withTimeout(5_000) {
                 firestoreAuth.signInWithEmailAndPassword(user.email, user.password)
                     .addOnCompleteListener {
                         if (!it.isSuccessful) return@addOnCompleteListener
-
                         _loginSuccess.value = true
-
                     }.await()
             }
         } catch (e: Exception) {
@@ -86,19 +89,19 @@ class MessengerRepository {
         }
     }
 
-    fun signOut(){
-       val uid =  firestoreAuth.uid
+    fun signOut() {
+        val uid = firestoreAuth.uid
         Log.d("UID before sign out", "$uid")
         firestoreAuth.signOut()
         _isLoggedOut.value = true
 
-        val uid2 =  firestoreAuth.uid
+        val uid2 = firestoreAuth.uid
         Log.d("UID after sign out", "$uid2")
     }
 
     fun checkIfLoggedIn() {
         val uid = FirebaseAuth.getInstance().uid
-        Log.d("UID UID UID UID","$uid")
+        Log.d("UID UID UID UID", "$uid")
         if (uid == null) {
             Log.d("LatestMessageFragment", "UID IS NULL")
             _isNotLoggedIn.value = true
@@ -116,7 +119,6 @@ class MessengerRepository {
                 ref.putFile(uri)
                     .addOnCompleteListener {
                         if (!it.isSuccessful) return@addOnCompleteListener
-
                         ref.downloadUrl.addOnSuccessListener {
                             saveUserToFirebaseDatabase(it.toString(), username)
                         }
@@ -143,7 +145,25 @@ class MessengerRepository {
         } catch (e: java.lang.Exception) {
             throw RegisterProfileError(e.message.toString(), e)
         }
+    }
 
+    fun fetchUsers():List<UserInfo>{
+        val ref = firebaseDatabase.getReference("/users")
+        val userItems = arrayListOf<UserInfo>()
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val user = it.getValue(UserInfo::class.java)
+                    Log.d("Users", "$user")
+                    userItems.add(user!!)
+                    Log.d("List", "$userItems")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+        return userItems
     }
 
     class UserSaveError(message: String, cause: Throwable) : Exception(message, cause)
