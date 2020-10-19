@@ -33,5 +33,13 @@
         android:id="@+id/latestMessageFragment"
         android:name="com.sgriendt.capstoneproject.LatestMessageFragment"
         android:label="fragment_latest_message"
-        tools:layout="@layout/fragment_latest_message"/>
+        tools:layout="@layout/fragment_latest_message">
+        <action
+            android:id="@+id/action_latestMessageFragment_to_newMessageFragment"
+            app:destination="@id/newMessageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newMessageFragment"
+        android:name="com.sgriendt.capstoneproject.NewMessageFragment"
+        android:label="NewMessageFragment" />
 </navigation>

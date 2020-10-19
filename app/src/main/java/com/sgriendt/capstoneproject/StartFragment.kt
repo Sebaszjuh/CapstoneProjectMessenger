@@ -23,6 +23,7 @@ class StartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        activity?.title = "Start"
         viewModel.checkLogin()
 
         return inflater.inflate(R.layout.fragment_start, container, false)
@@ -31,12 +32,17 @@ class StartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeUserLoggedIn()
+
         btn_login_start.setOnClickListener{onLoginClick()}
         btn_login_register.setOnClickListener{onRegisterClick()}
     }
 
     private fun onLoginClick(){
-        findNavController().navigate(R.id.loginFragment)
+        viewModel.isNotLoggedin.observe(viewLifecycleOwner, Observer{
+            Log.d("NOT LOGGED IN", "NOT LOGGED IN")
+            findNavController().navigate(R.id.loginFragment)
+        })
+
     }
 
     private fun onRegisterClick(){
@@ -45,11 +51,8 @@ class StartFragment : Fragment() {
 
     private fun observeUserLoggedIn() {
         viewModel.isLoggedin.observe(viewLifecycleOwner, Observer {
-            val uid = FirebaseAuth.getInstance().uid
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            Toast.makeText(context, "${uid.toString()}, ${currentUser.toString()}", Toast.LENGTH_LONG).show()
-//            Log.d("Gegevens", "$uid $currentUser")
             findNavController().navigate(R.id.latestMessageFragment)
         })
     }
+
 }

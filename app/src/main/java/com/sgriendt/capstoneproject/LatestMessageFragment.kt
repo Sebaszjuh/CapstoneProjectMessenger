@@ -18,6 +18,7 @@ class LatestMessageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.title = "Chats"
         return inflater.inflate(R.layout.fragment_latest_message, container, false)
     }
 
@@ -37,7 +38,7 @@ class LatestMessageFragment : Fragment() {
                 viewModel.signOut()
             }
             R.id.menu_new_message -> {
-
+                findNavController().navigate(R.id.newMessageFragment)
             }
 
         }
@@ -68,7 +69,7 @@ class LatestMessageFragment : Fragment() {
 //
     private fun observeIsLoggedOut() {
         viewModel.isLoggedOut.observe(viewLifecycleOwner, Observer {
-            findNavController().navigate(R.id.startFragment)
+            findNavController().navigate(R.id.loginFragment)
         })
     }
 
