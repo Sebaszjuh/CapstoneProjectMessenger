@@ -30,10 +30,18 @@ class MessengerRepository {
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _loginSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _isNotLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isLoggedOut: MutableLiveData<Boolean> = MutableLiveData()
+
+    val isLoggedIn: LiveData<Boolean>
+        get() = _isLoggedIn
 
     val isNotLoggedIn: LiveData<Boolean>
         get() = _isNotLoggedIn
+
+    val isLoggedOut: LiveData<Boolean>
+        get() = _isLoggedOut
 
     val createSuccess: LiveData<Boolean>
         get() = _createSuccess
@@ -70,6 +78,7 @@ class MessengerRepository {
                         if (!it.isSuccessful) return@addOnCompleteListener
 
                         _loginSuccess.value = true
+
                     }.await()
             }
         } catch (e: Exception) {
@@ -77,10 +86,24 @@ class MessengerRepository {
         }
     }
 
+    fun signOut(){
+       val uid =  firestoreAuth.uid
+        Log.d("UID before sign out", "$uid")
+        firestoreAuth.signOut()
+        _isLoggedOut.value = true
+
+        val uid2 =  firestoreAuth.uid
+        Log.d("UID after sign out", "$uid2")
+    }
+
     fun checkIfLoggedIn() {
-        val uid = firestoreAuth.uid
+        val uid = FirebaseAuth.getInstance().uid
+        Log.d("UID UID UID UID","$uid")
         if (uid == null) {
-            _isNotLoggedIn.value = true;
+            Log.d("LatestMessageFragment", "UID IS NULL")
+            _isNotLoggedIn.value = true
+        } else {
+            _isLoggedIn.value = true
         }
     }
 

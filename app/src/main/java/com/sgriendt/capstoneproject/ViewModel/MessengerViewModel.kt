@@ -20,7 +20,10 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
     val loginSuccess: LiveData<Boolean> = messengerRepository.loginSuccess
     val registerProfileSucces: LiveData<Boolean> = messengerRepository.registerProfileSucces
+    val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
     val isNotLoggedin: LiveData<Boolean> = messengerRepository.isNotLoggedIn
+    val isLoggedOut: LiveData<Boolean> = messengerRepository.isLoggedOut
+
 
     val errorText: LiveData<String>
         get() = _errorText
@@ -31,6 +34,9 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 messengerRepository.createUser(user)
+                if (createSuccess.value == true) {
+                    messengerRepository.signInUser(user)
+                }
             } catch (ex: MessengerRepository.UserSaveError) {
                 val errorMsg = "Something went wrong while creating user"
                 Log.e(TAG, ex.message ?: errorMsg)
@@ -39,14 +45,13 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     fun loginUser(email: String, password: String) {
         val user = User(email, password)
         viewModelScope.launch {
             try {
                 messengerRepository.signInUser(user)
-            } catch (ex: MessengerRepository.UserSaveError) {
-                val errorMsg = "Something went wrong while loging in"
+            } catch (ex: MessengerRepository.UserLoginError) {
+                val errorMsg = "Something went wrong while logging in"
                 Log.e(TAG, ex.message ?: errorMsg)
                 _errorText.value = errorMsg
             }
@@ -54,7 +59,6 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun uploadURI(uri: Uri, username: String) {
-
         viewModelScope.launch {
             try {
                 messengerRepository.uploadURI(uri, username)
@@ -66,9 +70,15 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun checkLogin(){
+    fun checkLogin() {
         viewModelScope.launch {
             messengerRepository.checkIfLoggedIn()
         }
     }
+
+    fun signOut() {
+        messengerRepository.signOut()
+    }
+
+
 }

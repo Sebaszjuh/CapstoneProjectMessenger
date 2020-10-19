@@ -1,5 +1,6 @@
 package com.sgriendt.capstoneproject
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register.*
@@ -41,6 +43,8 @@ class LoginFragment : Fragment() {
         val password = password_login_text.text.toString()
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
+                Log.d("Password", "$password")
+                Log.d("emaik", "$email")
                 viewModel.loginUser(email, password)
             }
         }
@@ -48,7 +52,6 @@ class LoginFragment : Fragment() {
 
     private fun observeLoginSuccess() {
         viewModel.loginSuccess.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(activity, R.string.succes, Toast.LENGTH_LONG).show()
             findNavController().navigate(R.id.latestMessageFragment)
         })
     }

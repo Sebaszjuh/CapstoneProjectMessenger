@@ -71,7 +71,7 @@ class RegisterFragment : Fragment() {
     private fun observeUserCreation() {
         viewModel.createSuccess.observe(viewLifecycleOwner, Observer {
             Toast.makeText(activity, R.string.succes, Toast.LENGTH_LONG).show()
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.latestMessageFragment)
         })
     }
     private fun onGalleryClick() {
