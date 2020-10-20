@@ -8,16 +8,27 @@ import com.sgriendt.capstoneproject.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user.view.*
 
-class UserItemAdapter(private val users: List<UserInfo>) :
+class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUserClickListener) :
     RecyclerView.Adapter<UserItemAdapter.ViewHolder>()  {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun databind(userInfo: UserInfo) {
-            itemView.userName.text = userInfo.username
-            Picasso.get().load(userInfo.profileImageUrl).into(itemView.profileImage.profileImage)
+//            itemView.userName.text = userInfo.username
+//            Picasso.get().load(userInfo.profileImageUrl).into(itemView.profileImage.profileImage)
+
+        }
+
+        fun initialize(item: UserInfo, action: OnUserClickListener){
+            itemView.userName.text = item.username
+            Picasso.get().load(item.profileImageUrl).into(itemView.profileImage.profileImage)
+            itemView.setOnClickListener{
+                action.onUserClick(item, adapterPosition)
+            }
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -30,9 +41,12 @@ class UserItemAdapter(private val users: List<UserInfo>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.databind(users[position])
+//        holder.databind(users[position])
+        holder.initialize(users.get(position), clickListener )
     }
 
+}
 
-
+interface OnUserClickListener{
+    fun onUserClick(item: UserInfo, position: Int)
 }

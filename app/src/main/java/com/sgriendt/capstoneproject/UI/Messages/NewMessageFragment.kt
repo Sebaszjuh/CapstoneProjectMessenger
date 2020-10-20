@@ -1,24 +1,28 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sgriendt.capstoneproject.Model.OnUserClickListener
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Model.UserItemAdapter
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_new_message.*
 
-class NewMessageFragment : Fragment() {
+class NewMessageFragment : Fragment(), OnUserClickListener {
 
     private val viewModel: MessengerViewModel by activityViewModels()
     private val userList = arrayListOf<UserInfo>()
-    private val UserInfoAdapter = UserItemAdapter(userList)
+    private val userInfoAdapter = UserItemAdapter(userList, this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,10 +38,13 @@ class NewMessageFragment : Fragment() {
 
     }
 
-    @ExperimentalStdlibApi
+    override fun onUserClick(item: UserInfo, position: Int) {
+       Log.d("YES", item.username)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeUsersAreFetched()
+
         init()
     }
 
@@ -56,12 +63,13 @@ class NewMessageFragment : Fragment() {
     }
 
     private fun getUserFromDatabase() {
-        val users = viewModel.userItems
+        var users: LiveData<ArrayList<UserInfo>>? = null
+        users?.value?.clear()
+        users = viewModel.userItems
         this@NewMessageFragment.userList.clear()
-
+        this.userList.clear()
         users.value?.let { this@NewMessageFragment.userList.addAll(it) }
-
-        this@NewMessageFragment.UserInfoAdapter.notifyDataSetChanged()
+        this@NewMessageFragment.userInfoAdapter.notifyDataSetChanged()
 
         rv_new_message.layoutManager = LinearLayoutManager(activity)
         rv_new_message.addItemDecoration(
@@ -70,25 +78,28 @@ class NewMessageFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
-
         rv_new_message.apply {
             setHasFixedSize(true)
             layoutManager = rv_new_message.layoutManager
-            adapter = UserInfoAdapter
+            adapter = userInfoAdapter
+
         }
+
     }
 
 
     private fun init() {
         activity?.title = "Select User"
-
+        observeUsersAreFetched()
     }
 
     private fun observeUsersAreFetched() {
-        viewModel.userItems.observe(viewLifecycleOwner, Observer {
+        viewModel.fetchedUsers.observe(viewLifecycleOwner, Observer {
             getUserFromDatabase()
         })
     }
+
+
 
 
 }

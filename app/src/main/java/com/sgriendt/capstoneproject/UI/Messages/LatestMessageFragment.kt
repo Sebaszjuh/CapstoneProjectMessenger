@@ -49,23 +49,6 @@ class LatestMessageFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-
-    // WERKT NIET
-//    private fun observeUserLoggedIn() {
-//        viewModel.isLoggedin.observe(viewLifecycleOwner, Observer {
-//            val uid = FirebaseAuth.getInstance().uid
-//            val currentUser = FirebaseAuth.getInstance().currentUser
-//            Log.d("Gegevens", "$uid $currentUser")
-//            findNavController().navigate(R.id.latestMessageFragment)
-//        })
-//    }
-//
-//    private fun observeUserNotLoggedIn() {
-//        viewModel.isNotLoggedin.observe(viewLifecycleOwner, Observer {
-//            findNavController().navigate(R.id.startFragment)
-//        })
-//    }
-//
     private fun observeIsLoggedOut() {
         viewModel.isLoggedOut.observe(viewLifecycleOwner, Observer {
             findNavController().navigate(R.id.loginFragment)

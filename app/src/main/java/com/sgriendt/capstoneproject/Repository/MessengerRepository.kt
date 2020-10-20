@@ -39,10 +39,14 @@ class MessengerRepository {
     private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _isNotLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _isLoggedOut: MutableLiveData<Boolean> = MutableLiveData()
+    private val _fetchedUsers: MutableLiveData<Boolean> = MutableLiveData()
     private var _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
 
     val getUserItems: LiveData<ArrayList<UserInfo>>
         get() = _userItems1
+
+    val isFetchedUsers: LiveData<Boolean>
+        get() = _fetchedUsers
 
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
@@ -162,14 +166,16 @@ class MessengerRepository {
     }
 
     fun getData() {
-            retrieveUsers(object : FirebaseCallback {
-                override fun onCallback(list: ArrayList<UserInfo>) {
-                    Log.d("Last check", list.toString())
-                    _userItems1.value = list
-                    Log.d("user user", userUserItems.toString())
-                }
-            })
-        }
+        _userItems1.value?.clear()
+        retrieveUsers(object : FirebaseCallback {
+            override fun onCallback(list: ArrayList<UserInfo>) {
+                Log.d("Last check", list.toString())
+                _userItems1.value = list
+                Log.d("user user", userUserItems.toString())
+                _fetchedUsers.value = true
+            }
+        })
+    }
 
 
 //    suspend fun getData() {
@@ -208,6 +214,7 @@ class MessengerRepository {
                 }
                 firebaseCallback.onCallback(userItems)
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
