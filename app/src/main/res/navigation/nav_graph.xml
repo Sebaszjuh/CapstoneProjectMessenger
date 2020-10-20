@@ -41,5 +41,15 @@
     <fragment
         android:id="@+id/newMessageFragment"
         android:name="com.sgriendt.capstoneproject.UI.Messages.NewMessageFragment"
-        android:label="NewMessageFragment" />
+        android:label="NewMessageFragment" >
+        <action
+            android:id="@+id/action_newMessageFragment_to_chatLogFragment"
+            app:destination="@id/chatLogFragment"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/chatLogFragment"
+        android:name="com.sgriendt.capstoneproject.UI.Messages.ChatLogFragment"
+        android:label="ChatLogFragment"
+        />
 </navigation>

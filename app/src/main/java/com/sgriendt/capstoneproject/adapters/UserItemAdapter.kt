@@ -1,9 +1,10 @@
-package com.sgriendt.capstoneproject.Model
+package com.sgriendt.capstoneproject.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user.view.*
@@ -20,7 +21,7 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
         }
 
         fun initialize(item: UserInfo, action: OnUserClickListener){
-            itemView.userName.text = item.username
+            itemView.message_user_from.text = item.username
             Picasso.get().load(item.profileImageUrl).into(itemView.profileImage.profileImage)
             itemView.setOnClickListener{
                 action.onUserClick(item, adapterPosition)

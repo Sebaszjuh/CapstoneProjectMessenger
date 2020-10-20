@@ -1,9 +1,7 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
@@ -11,9 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sgriendt.capstoneproject.Model.OnUserClickListener
+import com.sgriendt.capstoneproject.adapters.OnUserClickListener
 import com.sgriendt.capstoneproject.Model.UserInfo
-import com.sgriendt.capstoneproject.Model.UserItemAdapter
+import com.sgriendt.capstoneproject.adapters.UserItemAdapter
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_new_message.*
@@ -37,9 +35,9 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
         viewModel.fetchUsers()
 
     }
-
+    // popBackstack om terug te ganan?
     override fun onUserClick(item: UserInfo, position: Int) {
-       Log.d("YES", item.username)
+        findNavController().navigate(R.id.chatLogFragment)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,11 +80,8 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
             setHasFixedSize(true)
             layoutManager = rv_new_message.layoutManager
             adapter = userInfoAdapter
-
         }
-
     }
-
 
     private fun init() {
         activity?.title = "Select User"
@@ -98,8 +93,6 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
             getUserFromDatabase()
         })
     }
-
-
 
 
 }
