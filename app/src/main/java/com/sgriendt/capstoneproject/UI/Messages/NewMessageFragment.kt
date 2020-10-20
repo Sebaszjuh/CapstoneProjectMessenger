@@ -1,4 +1,4 @@
-package com.sgriendt.capstoneproject
+package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
 import android.view.*
@@ -8,16 +8,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
-import com.sgriendt.capstoneproject.Model.UserItem
-import com.sgriendt.capstoneproject.Repository.MessengerRepository
+import com.sgriendt.capstoneproject.Model.UserItemAdapter
+import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_new_message.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class NewMessageFragment : Fragment() {
 

@@ -33,7 +33,6 @@ class MessengerRepository {
     val user: LiveData<User>
         get() = _user
 
-    //the CreateQuizFragment can use this to see if creation succeeded
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _loginSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
@@ -94,6 +93,9 @@ class MessengerRepository {
         }
     }
 
+    /**
+     * Method that signs off the user.
+     */
     fun signOut() {
         val uid = firestoreAuth.uid
         Log.d("UID before sign out", "$uid")
@@ -104,6 +106,10 @@ class MessengerRepository {
         Log.d("UID after sign out", "$uid2")
     }
 
+    /**
+     * Method checks if user is still logged in. Done by checking the uid. If not logged in returns a livedata variable which is observable in the fragment
+     * @param uid userid received from firebase
+     */
     fun checkIfLoggedIn() {
         val uid = FirebaseAuth.getInstance().uid
         Log.d("UID UID UID UID", "$uid")
@@ -115,6 +121,9 @@ class MessengerRepository {
         }
     }
 
+    /**
+     * Tries uploading the URI of the profilepicture of the user. If sucessfull it calls saveUserToFirebaseDatabase to save the complete user to the firebase
+     */
     suspend fun uploadURI(uri: Uri, username: String) {
         try {
             //firestore has support for coroutines via the extra dependency we've added :)
@@ -171,23 +180,23 @@ class MessengerRepository {
 //    }
 
 
-    private suspend fun readData() {
-        withContext(Dispatchers.IO) {
-            refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot){
-                    snapshot.children.forEach {
-                        val user = it.getValue(UserInfo::class.java)
-                        userItems.add(user!!)
-                        Log.d("userItems", userItems.toString())
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
-
-        }
-    }
+//    private suspend fun readData() {
+//        withContext(Dispatchers.IO) {
+//            refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot){
+//                    snapshot.children.forEach {
+//                        val user = it.getValue(UserInfo::class.java)
+//                        userItems.add(user!!)
+//                        Log.d("userItems", userItems.toString())
+//                    }
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                }
+//            })
+//
+//        }
+//    }
 
     private fun retrieveUsers(firebaseCallback: FirebaseCallback) {
         refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -213,7 +222,9 @@ class MessengerRepository {
     class RegisterProfileError(message: String, cause: Throwable) : Exception(message, cause)
 }
 
-
+/**
+ * Callback used to the retrieval of the users.
+ */
 interface FirebaseCallback {
     fun onCallback(list: ArrayList<UserInfo>)
 }

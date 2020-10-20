@@ -1,9 +1,7 @@
-package com.sgriendt.capstoneproject
+package com.sgriendt.capstoneproject.UI.Login
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_register.*
 

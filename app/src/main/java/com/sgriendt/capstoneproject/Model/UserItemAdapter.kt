@@ -1,11 +1,11 @@
-package com.sgriendt.capstoneproject
+package com.sgriendt.capstoneproject.Model
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.sgriendt.capstoneproject.Model.UserInfo
-import com.sgriendt.capstoneproject.Model.UserItem
+import com.sgriendt.capstoneproject.R
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user.view.*
 
 class UserItemAdapter(private val users: List<UserInfo>) :
@@ -15,9 +15,7 @@ class UserItemAdapter(private val users: List<UserInfo>) :
 
         fun databind(userInfo: UserInfo) {
             itemView.userName.text = userInfo.username
-
-
-//            itemView.profileImage.setImageURI(userItem.profileImage)
+            Picasso.get().load(userInfo.profileImageUrl).into(itemView.profileImage.profileImage)
         }
     }
 

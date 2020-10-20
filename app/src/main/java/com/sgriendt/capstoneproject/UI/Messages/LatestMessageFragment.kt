@@ -1,13 +1,12 @@
-package com.sgriendt.capstoneproject
+package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
+import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 
 class LatestMessageFragment : Fragment() {
