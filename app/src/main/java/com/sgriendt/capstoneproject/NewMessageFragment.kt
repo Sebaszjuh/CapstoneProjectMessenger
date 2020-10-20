@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,11 +35,14 @@ class NewMessageFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        viewModel.fetchUsers()
+
     }
 
+    @ExperimentalStdlibApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getUserFromDatabase()
+        observeUsersAreFetched()
         init()
     }
 
@@ -57,20 +61,13 @@ class NewMessageFragment : Fragment() {
     }
 
     private fun getUserFromDatabase() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val shoppingList = withContext(Dispatchers.IO) {
-                viewModel.fetchUsers()
-            }
-            this@NewMessageFragment.userList.clear()
+        val users = viewModel.userItems
+        this@NewMessageFragment.userList.clear()
 
-            this@NewMessageFragment.userList.addAll(shoppingList)
+        users.value?.let { this@NewMessageFragment.userList.addAll(it) }
 
-            this@NewMessageFragment.UserInfoAdapter.notifyDataSetChanged()
-        }
-    }
+        this@NewMessageFragment.UserInfoAdapter.notifyDataSetChanged()
 
-    private fun init() {
-        activity?.title = "Select User"
         rv_new_message.layoutManager = LinearLayoutManager(activity)
         rv_new_message.addItemDecoration(
             DividerItemDecoration(
@@ -84,6 +81,18 @@ class NewMessageFragment : Fragment() {
             layoutManager = rv_new_message.layoutManager
             adapter = UserInfoAdapter
         }
+    }
+
+
+    private fun init() {
+        activity?.title = "Select User"
+
+    }
+
+    private fun observeUsersAreFetched() {
+        viewModel.userItems.observe(viewLifecycleOwner, Observer {
+            getUserFromDatabase()
+        })
     }
 
 

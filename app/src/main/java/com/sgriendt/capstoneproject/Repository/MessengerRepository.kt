@@ -4,21 +4,17 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
-import com.sgriendt.capstoneproject.Model.UserItem
-import com.sgriendt.capstoneproject.UserItemAdapter
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withTimeout
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,8 +25,10 @@ class MessengerRepository {
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val refUsers = firebaseDatabase.getReference("/users")
     private val userItems = arrayListOf<UserInfo>()
+    private var userUserItems = arrayListOf<UserInfo>()
 
     private val _user: MutableLiveData<User> = MutableLiveData()
+
 
     val user: LiveData<User>
         get() = _user
@@ -42,6 +40,10 @@ class MessengerRepository {
     private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _isNotLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _isLoggedOut: MutableLiveData<Boolean> = MutableLiveData()
+    private var _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
+
+    val getUserItems: LiveData<ArrayList<UserInfo>>
+        get() = _userItems1
 
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
@@ -61,9 +63,9 @@ class MessengerRepository {
     val registerProfileSucces: LiveData<Boolean>
         get() = _registerProfile
 
+
     suspend fun createUser(user: User) {
         try {
-            //firestore has support for coroutines via the extra dependency we've added :)
             withTimeout(5_000) {
                 firestoreAuth.createUserWithEmailAndPassword(user.email, user.password)
                     .addOnCompleteListener {
@@ -150,30 +152,57 @@ class MessengerRepository {
         }
     }
 
-    fun fetchUsers(): List<UserInfo> {
-        var realList: List<UserInfo> = emptyList()
-        readData(object : FirebaseCallback {
-            override fun onCallback(list: List<UserInfo>) {
-                Log.d("Last check", list.toString())
-                realList = list
-            }
-        })
-        return realList
+    fun getData() {
+            retrieveUsers(object : FirebaseCallback {
+                override fun onCallback(list: ArrayList<UserInfo>) {
+                    Log.d("Last check", list.toString())
+                    _userItems1.value = list
+                    Log.d("user user", userUserItems.toString())
+                }
+            })
+        }
+
+
+//    suspend fun getData() {
+//        val real = withContext(Dispatchers.IO){
+//            retrieveUsers()
+//        }
+//        Log.d("Get data", real.toString())
+//    }
+
+
+    private suspend fun readData() {
+        withContext(Dispatchers.IO) {
+            refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot){
+                    snapshot.children.forEach {
+                        val user = it.getValue(UserInfo::class.java)
+                        userItems.add(user!!)
+                        Log.d("userItems", userItems.toString())
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+        }
     }
 
-    private fun readData(firebaseCallback: FirebaseCallback) {
+    private fun retrieveUsers(firebaseCallback: FirebaseCallback) {
         refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     val user = it.getValue(UserInfo::class.java)
                     userItems.add(user!!)
+                    Log.d("retrieve users", userItems.toString())
                 }
                 firebaseCallback.onCallback(userItems)
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
         })
+
     }
 
     class UserSaveError(message: String, cause: Throwable) : Exception(message, cause)
@@ -184,6 +213,7 @@ class MessengerRepository {
     class RegisterProfileError(message: String, cause: Throwable) : Exception(message, cause)
 }
 
-private interface FirebaseCallback {
-    fun onCallback(list: List<UserInfo>)
+
+interface FirebaseCallback {
+    fun onCallback(list: ArrayList<UserInfo>)
 }

@@ -10,6 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Repository.MessengerRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MessengerViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,6 +27,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
     val isNotLoggedin: LiveData<Boolean> = messengerRepository.isNotLoggedIn
     val isLoggedOut: LiveData<Boolean> = messengerRepository.isLoggedOut
+    val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
 
 
     val errorText: LiveData<String>
@@ -71,17 +75,19 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+
     fun fetchUsers(): List<UserInfo> {
         var list: List<UserInfo> = emptyList()
-        viewModelScope.launch {
+
             try{
-                messengerRepository.fetchUsers()
-//                Log.d("List of users", "$list")
+                messengerRepository.getData()
+
             } catch (e: Exception){
                 Log.d("BROKEN", "BROKEN")
             }
-        }
-        Log.d("View check", list.toString())
+
+//        val thing = messengerRepository.userItems
+//        Log.d("View check", list.toString())
         return list
     }
 
