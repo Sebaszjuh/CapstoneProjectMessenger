@@ -37,7 +37,9 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     }
     // popBackstack om terug te ganan?
     override fun onUserClick(item: UserInfo, position: Int) {
-        findNavController().navigate(R.id.chatLogFragment)
+        val bundle = Bundle()
+        bundle.putParcelable("usernameSelected", userList[position])
+        findNavController().navigate(R.id.chatLogFragment, bundle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,8 +49,10 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         when (item.itemId) {
             R.id.menu_new_message -> {
+
                 findNavController().navigateUp()
             }
         }
@@ -68,7 +72,6 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
         this.userList.clear()
         users.value?.let { this@NewMessageFragment.userList.addAll(it) }
         this@NewMessageFragment.userInfoAdapter.notifyDataSetChanged()
-
         rv_new_message.layoutManager = LinearLayoutManager(activity)
         rv_new_message.addItemDecoration(
             DividerItemDecoration(
