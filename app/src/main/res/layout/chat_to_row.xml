@@ -10,36 +10,34 @@
         android:id="@+id/profileImage_from_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <TextView
         android:id="@+id/chat_message_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
-        android:maxWidth="220dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/rounded_edittxt_register"
         android:backgroundTint="@android:color/white"
         android:padding="16dp"
+        android:maxWidth="220dp"
         android:text="Very long message thing, lets see what happens with this message yo"
-        app:layout_constraintStart_toEndOf="@+id/profileImage_from_chat"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/profileImage_from_chat"
+        app:layout_constraintTop_toTopOf="@+id/profileImage_from_chat" />
 
     <TextView
         android:id="@+id/timeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:text="TextView"
+        android:layout_marginEnd="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chat_message_from" />
-
+        app:layout_constraintEnd_toStartOf="@+id/chat_message_from"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
