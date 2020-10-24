@@ -14,10 +14,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sgriendt.capstoneproject.Model.Chat
+import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import com.sgriendt.capstoneproject.adapters.ChatMessageAdapter
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
@@ -47,7 +49,9 @@ class ChatLogFragment : Fragment() {
     }
 
     private fun retrieveMessages() {
-        viewModel.getMessages()
+        val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
+
+        viewModel.getMessages(user)
     }
 
     @SuppressLint("UseRequireInsteadOfGet")
@@ -84,9 +88,12 @@ class ChatLogFragment : Fragment() {
     }
 }
 
-class ChatTo(val text: String) : Item<GroupieViewHolder>() {
+class ChatTo(val text: String, val user: UserInfo) : Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.chat_message_to.text = text
+        val uri = user.profileImageUrl
+        val profileImage = viewHolder.itemView.profileImage_to_chat
+        Picasso.get().load(uri).into(profileImage)
     }
 
     override fun getLayout(): Int {
@@ -94,9 +101,12 @@ class ChatTo(val text: String) : Item<GroupieViewHolder>() {
     }
 }
 
-class ChatFrom(val text: String) : Item<GroupieViewHolder>() {
+class ChatFrom(val text: String, val user: UserInfo) : Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.chat_message_from.text = text
+        val uri = user.profileImageUrl
+        val profileImage = viewHolder.itemView.profileImage_from_chat
+        Picasso.get().load(uri).into(profileImage)
     }
 
     override fun getLayout(): Int {

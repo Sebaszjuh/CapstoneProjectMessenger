@@ -93,10 +93,10 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getMessages() {
+    fun getMessages(user: UserInfo) {
         viewModelScope.launch {
             try {
-                messengerRepository.retrieveMessages()
+                messengerRepository.retrieveMessages(user)
                 Log.d("Fires Viewmodel", "YES")
             } catch (e: Exception) {
                 Log.d("BROKEN", e.toString())

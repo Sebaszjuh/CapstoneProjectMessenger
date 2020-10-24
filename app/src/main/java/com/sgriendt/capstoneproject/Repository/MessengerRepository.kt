@@ -1,6 +1,7 @@
 package com.sgriendt.capstoneproject.Repository
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +16,7 @@ import com.sgriendt.capstoneproject.UI.Messages.ChatTo
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.*
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +30,8 @@ class MessengerRepository {
     private val refUsers = firebaseDatabase.getReference("/users")
     private val refMessages = firebaseDatabase.getReference("/messages")
     private val userItems = arrayListOf<UserInfo>()
+    private var currentUser: UserInfo? = null
+    private var currentUser1: UserInfo? = null
 
     //    private var userUserItems = arrayListOf<UserInfo>()
     private val adapter = GroupAdapter<GroupieViewHolder>()
@@ -178,24 +182,50 @@ class MessengerRepository {
         })
     }
 
-    fun retrieveMessages() {
+    fun retrieveMessages(user: UserInfo) {
         getMessages(object : FirebaseMessagesCallbackGroup {
             override fun onCallback(listTo: GroupAdapter<GroupieViewHolder>) {
                 _groupAdapter.value = listTo
                 _fetchedMessages.value = true
             }
+        }, user)
+    }
+
+    private fun callbackCurrentUser(){
+        getCurrentUser(object: FirebaseCurrentUserCallBack{
+            override fun onCallback(user: UserInfo) {
+                currentUser = user
+            }
+
         })
     }
 
-    private fun getMessages(firebaseMessagesCallback: FirebaseMessagesCallbackGroup) {
+    private fun getCurrentUser(firebaseCurrentUserCallBack: FirebaseCurrentUserCallBack){
+        val uid = firestoreAuth.uid
+        Log.d("test", uid.toString())
+        val ref = firebaseDatabase.getReference("/users/$uid")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+               currentUser1 = snapshot.getValue(UserInfo::class.java)
+                Log.d("currentuser", currentUser1.toString())
+                firebaseCurrentUserCallBack.onCallback(currentUser1!!)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun getMessages(firebaseMessagesCallback: FirebaseMessagesCallbackGroup, user : UserInfo) {
+        callbackCurrentUser()
         refMessages.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage?.toId == firestoreAuth.uid) {
-                    adapter.add(ChatFrom(chatMessage?.text!!))
-
+                    val toUser = user
+                    adapter.add(ChatFrom(chatMessage?.text!!, toUser))
                 } else {
-                    adapter.add(ChatTo(chatMessage?.text!!))
+                    Log.d("currentuser", currentUser.toString())
+                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!! ))
                 }
                 firebaseMessagesCallback.onCallback(adapter)
             }
@@ -246,6 +276,9 @@ interface FirebaseCallback {
 
 interface FirebaseMessagesCallbackGroup {
     fun onCallback(listTo: GroupAdapter<GroupieViewHolder>)
+}
+interface FirebaseCurrentUserCallBack{
+    fun onCallback(user: UserInfo)
 }
 
 object DateUtils1 {
