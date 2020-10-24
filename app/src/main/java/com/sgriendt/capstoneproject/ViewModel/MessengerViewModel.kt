@@ -80,11 +80,11 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun sendMessage(text: String, toId: String){
+    fun sendMessage(text: String, toId: String) {
         viewModelScope.launch {
-            try{
+            try {
                 messengerRepository.sendMessage(text, toId)
-            } catch (ex: MessengerRepository.UserMessageError){
+            } catch (ex: MessengerRepository.UserMessageError) {
                 val errorMsg = "Something went wrong while sending your message"
                 Log.e(TAG, ex.message ?: errorMsg)
                 _errorText.value = errorMsg
@@ -92,24 +92,26 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun getMessages(){
-        try{
-            messengerRepository.retrieveMessages()
-            Log.d("Fires Viewmodel", "YES")
-        } catch (e: Exception){
-            Log.d("BROKEN", e.toString())
+    fun getMessages() {
+        viewModelScope.launch {
+            try {
+                messengerRepository.retrieveMessages()
+                Log.d("Fires Viewmodel", "YES")
+            } catch (e: Exception) {
+                Log.d("BROKEN", e.toString())
+            }
         }
     }
 
 
-    fun fetchUsers(): List<UserInfo> {
-        val list: List<UserInfo> = emptyList()
-            try{
+    fun fetchUsers() {
+        viewModelScope.launch {
+            try {
                 messengerRepository.getData()
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("BROKEN", "BROKEN")
             }
-        return list
+        }
     }
 
     fun checkLogin() {

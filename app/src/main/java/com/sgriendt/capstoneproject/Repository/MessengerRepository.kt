@@ -197,15 +197,14 @@ class MessengerRepository {
     }
 
     private fun getMessages(firebaseMessagesCallback: FirebaseMessagesCallback) {
-
         refMessages.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                     if (chatMessage?.toId == firestoreAuth.uid) {
-                        chatTo.add(ChatTo(chatMessage?.text!!))
+                        chatFrom.add(ChatFrom(chatMessage?.text!!))
                         Log.d("chatmessage repo to ", chatMessage.text)
                     } else {
-                        chatFrom.add(ChatFrom(chatMessage?.text!!))
+                        chatTo.add(ChatTo(chatMessage?.text!!))
                         Log.d("chatmessage repo from", chatMessage.text)
                     }
                 firebaseMessagesCallback.onCallback(chatTo, chatFrom)

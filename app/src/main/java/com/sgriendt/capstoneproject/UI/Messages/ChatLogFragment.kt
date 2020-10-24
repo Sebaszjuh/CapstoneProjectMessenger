@@ -52,8 +52,14 @@ class ChatLogFragment : Fragment() {
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun sendMessage() {
-        val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
-        viewModel.sendMessage(edit_text_chat_log.text.toString(), user.uid)
+        if (edit_text_chat_log.text == null) {
+            return
+        } else {
+            val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
+            viewModel.sendMessage(edit_text_chat_log.text.toString(), user.uid)
+            edit_text_chat_log.text = null
+        }
+
     }
 
     private fun observeMessagesAreFetched() {
@@ -62,7 +68,7 @@ class ChatLogFragment : Fragment() {
         })
     }
 
-    private fun getMessagesFromdatabase(){
+    private fun getMessagesFromdatabase() {
         val adapter = GroupAdapter<GroupieViewHolder>()
         var messageTo: LiveData<ArrayList<ChatTo>>? = null
         var messageFrom: LiveData<ArrayList<ChatFrom>>? = null
@@ -70,11 +76,11 @@ class ChatLogFragment : Fragment() {
         messageTo?.value?.clear()
         messageTo = viewModel.messagesTo
         messageFrom = viewModel.messagesFrom
-        for(message in messageFrom.value!!){
+        for (message in messageFrom.value!!) {
             Log.d("TEST", message.text)
             adapter.add(ChatFrom(message.text))
         }
-        for(message in messageTo.value!!){
+        for (message in messageTo.value!!) {
             adapter.add(ChatTo(message.text))
         }
 //        adapter.add(ChatTo(messageTo))
