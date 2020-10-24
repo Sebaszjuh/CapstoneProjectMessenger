@@ -28,7 +28,7 @@ class MessengerRepository {
     private var firestoreStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val refUsers = firebaseDatabase.getReference("/users")
-    private val refMessages = firebaseDatabase.getReference("/messages")
+
     private val userItems = arrayListOf<UserInfo>()
     private var currentUser: UserInfo? = null
     private var currentUser1: UserInfo? = null
@@ -41,6 +41,7 @@ class MessengerRepository {
     val user: LiveData<User>
         get() = _user
 
+
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _loginSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
@@ -51,6 +52,7 @@ class MessengerRepository {
     private val _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
     private val _fetchedMessages: MutableLiveData<Boolean> = MutableLiveData()
     private val _groupAdapter: MutableLiveData<GroupAdapter<GroupieViewHolder>> = MutableLiveData()
+    private val _toUser: MutableLiveData<UserInfo> = MutableLiveData()
 
     val getGroupAdapter: LiveData<GroupAdapter<GroupieViewHolder>>
         get() = _groupAdapter
@@ -82,6 +84,9 @@ class MessengerRepository {
     val registerProfileSucces: LiveData<Boolean>
         get() = _registerProfile
 
+    fun setUser(user: UserInfo){
+        _toUser.value = user
+    }
 
     suspend fun createUser(user: User) {
         try {
@@ -156,30 +161,32 @@ class MessengerRepository {
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUri: String, username: String) {
-        try {
-            val uid = FirebaseAuth.getInstance().uid ?: ""
-            val ref = firebaseDatabase.getReference("/users/$uid")
-            val user = UserInfo(uid, username, profileImageUri)
-            ref.setValue(user)
-                .addOnSuccessListener {
-                    _registerProfile.value = true;
-                }
-                .addOnFailureListener {
-                    _registerProfile.value = false
-                }
-        } catch (e: java.lang.Exception) {
-            throw RegisterProfileError(e.message.toString(), e)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val uid = FirebaseAuth.getInstance().uid ?: ""
+                val ref = firebaseDatabase.getReference("/users/$uid")
+                val user = UserInfo(uid, username, profileImageUri)
+                ref.setValue(user)
+                    .addOnSuccessListener {
+                        _registerProfile.value = true;
+                    }
+                    .addOnFailureListener {
+                        _registerProfile.value = false
+                    }
+            } catch (e: java.lang.Exception) {
+                throw RegisterProfileError(e.message.toString(), e)
+            }
         }
     }
 
     fun getData() {
-        _userItems1.value?.clear()
-        retrieveUsers(object : FirebaseCallback {
-            override fun onCallback(list: ArrayList<UserInfo>) {
-                _userItems1.value = list
-                _fetchedUsers.value = true
-            }
-        })
+            _userItems1.value?.clear()
+            retrieveUsers(object : FirebaseCallback {
+                override fun onCallback(list: ArrayList<UserInfo>) {
+                    _userItems1.value = list
+                    _fetchedUsers.value = true
+                }
+            })
     }
 
     fun retrieveMessages(user: UserInfo) {
@@ -191,32 +198,41 @@ class MessengerRepository {
         }, user)
     }
 
-    private fun callbackCurrentUser(){
-        getCurrentUser(object: FirebaseCurrentUserCallBack{
-            override fun onCallback(user: UserInfo) {
-                currentUser = user
-            }
-
-        })
+    private fun callbackCurrentUser() {
+            getCurrentUser(object : FirebaseCurrentUserCallBack {
+                override fun onCallback(user: UserInfo) {
+                    currentUser = user
+                }
+            })
     }
 
-    private fun getCurrentUser(firebaseCurrentUserCallBack: FirebaseCurrentUserCallBack){
-        val uid = firestoreAuth.uid
-        Log.d("test", uid.toString())
-        val ref = firebaseDatabase.getReference("/users/$uid")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-               currentUser1 = snapshot.getValue(UserInfo::class.java)
-                Log.d("currentuser", currentUser1.toString())
-                firebaseCurrentUserCallBack.onCallback(currentUser1!!)
-            }
+    private fun getCurrentUser(firebaseCurrentUserCallBack: FirebaseCurrentUserCallBack) {
+            currentUser1 == null
+            val uid = firestoreAuth.uid
+            Log.d("test", uid.toString())
+            val ref = firebaseDatabase.getReference("/users/$uid")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    currentUser1 = snapshot.getValue(UserInfo::class.java)
+                    Log.d("currentuser", currentUser1.toString())
+                    firebaseCurrentUserCallBack.onCallback(currentUser1!!)
+                }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
-
-    private fun getMessages(firebaseMessagesCallback: FirebaseMessagesCallbackGroup, user : UserInfo) {
+    // NOT CORRECTLY WORKING. NOT SHOWING THE MESSAGES
+    private fun getMessages(
+        firebaseMessagesCallback: FirebaseMessagesCallbackGroup,
+        user: UserInfo
+    ) {
         callbackCurrentUser()
+        adapter.clear()
+//        val toId: String? = _toUser.value?.uid
+        val userId = firestoreAuth.uid
+        val toId = user.uid
+        Log.d("REPO", "$toId and $userId")
+        val refMessages = firebaseDatabase.getReference("/user-message/$userId/$toId")
         refMessages.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
@@ -225,7 +241,7 @@ class MessengerRepository {
                     adapter.add(ChatFrom(chatMessage?.text!!, toUser))
                 } else {
                     Log.d("currentuser", currentUser.toString())
-                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!! ))
+                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!!))
                 }
                 firebaseMessagesCallback.onCallback(adapter)
             }
@@ -235,9 +251,11 @@ class MessengerRepository {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+
     }
 
     private fun retrieveUsers(firebaseCallback: FirebaseCallback) {
+        userItems.clear()
         refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
@@ -253,11 +271,15 @@ class MessengerRepository {
     }
 
     fun sendMessage(text: String, toId: String) {
-        val reference = firebaseDatabase.getReference("/messages").push()
-        val userId = firestoreAuth.uid ?: return
-        val id = reference.key ?: return
-        val chatObject = ChatMessage(id, text, userId, toId, System.currentTimeMillis())
-        reference.setValue(chatObject)
+        CoroutineScope(Dispatchers.IO).launch {
+            val userId = firestoreAuth.uid ?: return@launch
+            val reference = firebaseDatabase.getReference("/user-message/$userId/$toId").push()
+            val toReference = firebaseDatabase.getReference("/user-message/$toId/$userId").push()
+            val id = reference.key ?: return@launch
+            val chatObject = ChatMessage(id, text, userId, toId, System.currentTimeMillis())
+            reference.setValue(chatObject)
+            toReference.setValue(chatObject)
+        }
     }
 
     class UserSaveError(message: String, cause: Throwable) : Exception(message, cause)
@@ -277,7 +299,8 @@ interface FirebaseCallback {
 interface FirebaseMessagesCallbackGroup {
     fun onCallback(listTo: GroupAdapter<GroupieViewHolder>)
 }
-interface FirebaseCurrentUserCallBack{
+
+interface FirebaseCurrentUserCallBack {
     fun onCallback(user: UserInfo)
 }
 

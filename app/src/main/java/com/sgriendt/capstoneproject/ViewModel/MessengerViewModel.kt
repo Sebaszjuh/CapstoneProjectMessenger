@@ -56,10 +56,15 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun setUser(user: UserInfo){
+        messengerRepository.setUser(user)
+    }
+
     fun loginUser(email: String, password: String) {
         val user = User(email, password)
         viewModelScope.launch {
             try {
+                Log.d(TAG, "FIRES VIEW LOGIN")
                 messengerRepository.signInUser(user)
             } catch (ex: MessengerRepository.UserLoginError) {
                 val errorMsg = "Something went wrong while logging in"
@@ -97,7 +102,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 messengerRepository.retrieveMessages(user)
-                Log.d("Fires Viewmodel", "YES")
+                Log.d(TAG, "RETRIEVING VIEW MESSAGES")
             } catch (e: Exception) {
                 Log.d("BROKEN", e.toString())
             }
@@ -110,7 +115,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 messengerRepository.getData()
             } catch (e: Exception) {
-                Log.d("BROKEN", "BROKEN")
+                Log.d(TAG, "BROKEN")
             }
         }
     }
@@ -122,6 +127,8 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun signOut() {
-        messengerRepository.signOut()
+        viewModelScope.launch {
+            messengerRepository.signOut()
+        }
     }
 }

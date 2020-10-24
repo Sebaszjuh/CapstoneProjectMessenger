@@ -48,9 +48,10 @@ class ChatLogFragment : Fragment() {
         }
     }
 
+    @SuppressLint("UseRequireInsteadOfGet")
     private fun retrieveMessages() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
-
+        viewModel.setUser(user)
         viewModel.getMessages(user)
     }
 
@@ -60,6 +61,7 @@ class ChatLogFragment : Fragment() {
             return
         } else {
             val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
+            viewModel.setUser(user)
             viewModel.sendMessage(edit_text_chat_log.text.toString(), user.uid)
             edit_text_chat_log.text = null
         }
