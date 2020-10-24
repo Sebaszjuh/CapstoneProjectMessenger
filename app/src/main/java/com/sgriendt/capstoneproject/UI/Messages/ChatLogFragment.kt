@@ -69,21 +69,9 @@ class ChatLogFragment : Fragment() {
     }
 
     private fun getMessagesFromdatabase() {
-        val adapter = GroupAdapter<GroupieViewHolder>()
-        var messageTo: LiveData<ArrayList<ChatTo>>? = null
-        var messageFrom: LiveData<ArrayList<ChatFrom>>? = null
-        messageFrom?.value?.clear()
-        messageTo?.value?.clear()
-        messageTo = viewModel.messagesTo
-        messageFrom = viewModel.messagesFrom
-        for (message in messageFrom.value!!) {
-            Log.d("TEST", message.text)
-            adapter.add(ChatFrom(message.text))
-        }
-        for (message in messageTo.value!!) {
-            adapter.add(ChatTo(message.text))
-        }
-//        adapter.add(ChatTo(messageTo))
+        val adapter: GroupAdapter<GroupieViewHolder>
+        val messages = viewModel.groupAdapter
+        adapter = messages.value!!
         rv_chat_log.layoutManager = LinearLayoutManager(activity)
         rv_chat_log.adapter = adapter
     }
@@ -93,13 +81,6 @@ class ChatLogFragment : Fragment() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
         observeMessagesAreFetched()
         activity?.title = user.username
-
-//        val adapter = GroupAdapter<GroupieViewHolder>()
-//        adapter.add(ChatTo("YOURE A POTATO"))
-//        adapter.add(ChatFrom("IM A POTATO"))
-//
-//        rv_chat_log.layoutManager = LinearLayoutManager(activity)
-//        rv_chat_log.adapter = adapter
     }
 }
 

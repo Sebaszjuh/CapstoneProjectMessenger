@@ -12,6 +12,8 @@ import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Repository.MessengerRepository
 import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
 import com.sgriendt.capstoneproject.UI.Messages.ChatTo
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,8 +34,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
     val fetchedMessages: LiveData<Boolean> = messengerRepository.isMessagedFetched
-    val messagesTo: LiveData<ArrayList<ChatTo>> = messengerRepository.getChatToMessages
-    val messagesFrom: LiveData<ArrayList<ChatFrom>> = messengerRepository.getChatFromMessages
+    val groupAdapter: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getGroupAdapter
 
     val errorText: LiveData<String>
         get() = _errorText
