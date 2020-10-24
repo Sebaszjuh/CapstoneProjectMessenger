@@ -13,7 +13,6 @@ import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
-import kotlinx.android.synthetic.main.chat_to_row.view.timeText
 import kotlinx.android.synthetic.main.user.view.*
 import java.text.SimpleDateFormat
 import java.time.LocalTime
@@ -49,20 +48,20 @@ class ChatMessageAdapter(private val chatMessages: List<Chat>) :
     }
 
     inner class messageToViewHolder(itemView: View) : MessageViewHolder(itemView) {
-
-        fun databind(chatMessage: Chat) {
-            itemView.message_user_from.text = chatMessage.textMessage
-            itemView.timeText.text = DateUtils.fromMillisToTimeString(System.currentTimeMillis())
-        }
+//
+//        fun databind(chatMessage: Chat) {
+//            itemView.message_user_from.text = chatMessage.textMessage
+//            itemView.timeText_to.text = DateUtils.fromMillisToTimeString(System.currentTimeMillis())
+//        }
     }
 
     inner class messageFromViewHolder(itemView: View) : MessageViewHolder(itemView) {
 
-        fun databind(chatMessage: Chat) {
-            itemView.message_user_from.text = chatMessage.textMessage
-            itemView.timeText.text = DateUtils.fromMillisToTimeString(System.currentTimeMillis())
-            number = 1
-        }
+//        fun databind(chatMessage: Chat) {
+//            itemView.message_user_from.text = chatMessage.textMessage
+//            itemView.timeText_from.text = DateUtils.fromMillisToTimeString(System.currentTimeMillis())
+//            number = 1
+//        }
     }
 
     override fun getItemCount(): Int {
@@ -80,7 +79,7 @@ open class MessageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     open fun bind(message:Chat) {}
 }
 
-object DateUtils {
+object DateUtils1 {
     fun fromMillisToTimeString(millis: Long) : String {
         val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
         return format.format(millis)

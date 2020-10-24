@@ -32,19 +32,19 @@ class StartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeUserLoggedIn()
 
-        btn_login_start.setOnClickListener{onLoginClick()}
-        btn_login_register.setOnClickListener{onRegisterClick()}
+        btn_login_start.setOnClickListener { onLoginClick() }
+        btn_login_register.setOnClickListener { onRegisterClick() }
     }
 
-    private fun onLoginClick(){
-        viewModel.isNotLoggedin.observe(viewLifecycleOwner, Observer{
+    private fun onLoginClick() {
+        viewModel.isNotLoggedin.observe(viewLifecycleOwner, Observer {
             Log.d("NOT LOGGED IN", "NOT LOGGED IN")
             findNavController().navigate(R.id.loginFragment)
         })
 
     }
 
-    private fun onRegisterClick(){
+    private fun onRegisterClick() {
         findNavController().navigate(R.id.registerFragment)
     }
 

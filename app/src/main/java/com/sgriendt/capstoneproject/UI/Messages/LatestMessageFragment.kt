@@ -32,14 +32,13 @@ class LatestMessageFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.menu_sign_out ->{
+        when (item.itemId) {
+            R.id.menu_sign_out -> {
                 viewModel.signOut()
             }
             R.id.menu_new_message -> {
                 findNavController().navigate(R.id.newMessageFragment)
             }
-
         }
         return super.onOptionsItemSelected(item)
     }
@@ -54,5 +53,4 @@ class LatestMessageFragment : Fragment() {
             findNavController().navigate(R.id.loginFragment)
         })
     }
-
 }

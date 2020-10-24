@@ -7,7 +7,7 @@
     android:layout_marginBottom="10dp">
 
     <ImageView
-        android:id="@+id/profileImage_from_chat"
+        android:id="@+id/profileImage_to_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -20,7 +20,7 @@
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <TextView
-        android:id="@+id/chat_message_from"
+        android:id="@+id/chat_message_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
@@ -29,15 +29,15 @@
         android:padding="16dp"
         android:maxWidth="220dp"
         android:text="Very long message thing, lets see what happens with this message yo"
-        app:layout_constraintEnd_toStartOf="@+id/profileImage_from_chat"
-        app:layout_constraintTop_toTopOf="@+id/profileImage_from_chat" />
+        app:layout_constraintEnd_toStartOf="@+id/profileImage_to_chat"
+        app:layout_constraintTop_toTopOf="@+id/profileImage_to_chat" />
 
     <TextView
-        android:id="@+id/timeText"
+        android:id="@+id/timeText_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/chat_message_from"
+        app:layout_constraintEnd_toStartOf="@+id/chat_message_to"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

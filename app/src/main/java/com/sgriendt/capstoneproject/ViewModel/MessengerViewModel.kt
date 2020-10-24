@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Repository.MessengerRepository
+import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
+import com.sgriendt.capstoneproject.UI.Messages.ChatTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -29,7 +31,9 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val isLoggedOut: LiveData<Boolean> = messengerRepository.isLoggedOut
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
-
+    val fetchedMessages: LiveData<Boolean> = messengerRepository.isMessagedFetched
+    val messagesTo: LiveData<ArrayList<ChatTo>> = messengerRepository.getChatToMessages
+    val messagesFrom: LiveData<ArrayList<ChatFrom>> = messengerRepository.getChatFromMessages
 
     val errorText: LiveData<String>
         get() = _errorText
@@ -76,19 +80,35 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun sendMessage(text: String, toId: String){
+        viewModelScope.launch {
+            try{
+                messengerRepository.sendMessage(text, toId)
+            } catch (ex: MessengerRepository.UserMessageError){
+                val errorMsg = "Something went wrong while sending your message"
+                Log.e(TAG, ex.message ?: errorMsg)
+                _errorText.value = errorMsg
+            }
+        }
+    }
+
+    fun getMessages(){
+        try{
+            messengerRepository.retrieveMessages()
+            Log.d("Fires Viewmodel", "YES")
+        } catch (e: Exception){
+            Log.d("BROKEN", e.toString())
+        }
+    }
+
 
     fun fetchUsers(): List<UserInfo> {
-        var list: List<UserInfo> = emptyList()
-
+        val list: List<UserInfo> = emptyList()
             try{
                 messengerRepository.getData()
-
             } catch (e: Exception){
                 Log.d("BROKEN", "BROKEN")
             }
-
-//        val thing = messengerRepository.userItems
-//        Log.d("View check", list.toString())
         return list
     }
 
@@ -101,6 +121,4 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     fun signOut() {
         messengerRepository.signOut()
     }
-
-
 }

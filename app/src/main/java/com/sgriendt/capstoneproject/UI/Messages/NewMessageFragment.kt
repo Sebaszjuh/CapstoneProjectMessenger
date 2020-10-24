@@ -33,7 +33,6 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         viewModel.fetchUsers()
-
     }
     // popBackstack om terug te ganan?
     override fun onUserClick(item: UserInfo, position: Int) {
@@ -44,7 +43,6 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         init()
     }
 

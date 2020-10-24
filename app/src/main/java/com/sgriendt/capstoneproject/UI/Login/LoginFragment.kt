@@ -33,7 +33,6 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btn_login_login.setOnClickListener { onLoginClick() }
-
         observeLoginSuccess()
     }
 

@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user.view.*
 
 class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUserClickListener) :
-    RecyclerView.Adapter<UserItemAdapter.ViewHolder>()  {
+    RecyclerView.Adapter<UserItemAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -20,16 +20,14 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
 
         }
 
-        fun initialize(item: UserInfo, action: OnUserClickListener){
+        fun initialize(item: UserInfo, action: OnUserClickListener) {
             itemView.message_user_from.text = item.username
             Picasso.get().load(item.profileImageUrl).into(itemView.profileImage.profileImage)
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 action.onUserClick(item, adapterPosition)
             }
         }
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -42,12 +40,11 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        holder.databind(users[position])
-        holder.initialize(users.get(position), clickListener )
+        holder.initialize(users.get(position), clickListener)
     }
 
 }
 
-interface OnUserClickListener{
+interface OnUserClickListener {
     fun onUserClick(item: UserInfo, position: Int)
 }

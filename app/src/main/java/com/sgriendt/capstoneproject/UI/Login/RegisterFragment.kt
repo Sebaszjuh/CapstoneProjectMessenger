@@ -36,7 +36,6 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         alreadyRegistered_toLogin.setOnClickListener { goToLogin() }
         btn_open_picture_gallery.setOnClickListener { onGalleryClick() }
         btn_register.setOnClickListener { registerNewAccount() }
@@ -63,7 +62,6 @@ class RegisterFragment : Fragment() {
                 } else {
                     viewModel.uploadURI(profileImageUri!!, username)
                 }
-
             }
         }
     }
@@ -77,11 +75,7 @@ class RegisterFragment : Fragment() {
     private fun onGalleryClick() {
         // Create an Intent with action as ACTION_PICK
         val galleryIntent = Intent(Intent.ACTION_PICK)
-
-        // Sets the type as image/*. This ensures only components of type image are selected
         galleryIntent.type = "image/*"
-
-        // Start the activity using the gallery intent
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
     }
 
@@ -95,8 +89,6 @@ class RegisterFragment : Fragment() {
 
                     select_photo_imageview.setImageBitmap(bitmap)
                     btn_open_picture_gallery.alpha = 0f
-//                    val bitmapDrawable = BitmapDrawable(bitmap)
-//                    btn_open_picture_gallery.setBackgroundDrawable(bitmapDrawable)
                 }
             }
         }
