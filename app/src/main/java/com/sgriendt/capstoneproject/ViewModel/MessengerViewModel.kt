@@ -35,6 +35,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
     val fetchedMessages: LiveData<Boolean> = messengerRepository.isMessagedFetched
     val groupAdapter: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getGroupAdapter
+    val succesfulSendMessage: LiveData<Boolean> = messengerRepository.getMessageSendSuccesful
 
     val errorText: LiveData<String>
         get() = _errorText

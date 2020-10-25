@@ -31,6 +31,8 @@ import kotlinx.android.synthetic.main.user.view.*
 
 class ChatLogFragment : Fragment() {
     private val viewModel: MessengerViewModel by activityViewModels()
+    private lateinit var adapterThing: GroupAdapter<GroupieViewHolder>
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,8 +66,8 @@ class ChatLogFragment : Fragment() {
             viewModel.setUser(user)
             viewModel.sendMessage(edit_text_chat_log.text.toString(), user.uid)
             edit_text_chat_log.text = null
+            observeMessagesSendSuccesfully()
         }
-
     }
 
     private fun observeMessagesAreFetched() {
@@ -78,6 +80,7 @@ class ChatLogFragment : Fragment() {
         val adapter: GroupAdapter<GroupieViewHolder>
         val messages = viewModel.groupAdapter
         adapter = messages.value!!
+        adapterThing = adapter
         rv_chat_log.layoutManager = LinearLayoutManager(activity)
         rv_chat_log.adapter = adapter
     }
@@ -87,6 +90,12 @@ class ChatLogFragment : Fragment() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
         observeMessagesAreFetched()
         activity?.title = user.username
+    }
+
+    private fun  observeMessagesSendSuccesfully(){
+        viewModel.succesfulSendMessage.observe(viewLifecycleOwner, Observer {
+            rv_chat_log.scrollToPosition(adapterThing.itemCount-1)
+        })
     }
 }
 

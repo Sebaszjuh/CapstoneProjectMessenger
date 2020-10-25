@@ -53,6 +53,10 @@ class MessengerRepository {
     private val _fetchedMessages: MutableLiveData<Boolean> = MutableLiveData()
     private val _groupAdapter: MutableLiveData<GroupAdapter<GroupieViewHolder>> = MutableLiveData()
     private val _toUser: MutableLiveData<UserInfo> = MutableLiveData()
+    private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
+
+    val getMessageSendSuccesful
+        get() = _messageSendSuccesful
 
     val getGroupAdapter: LiveData<GroupAdapter<GroupieViewHolder>>
         get() = _groupAdapter
@@ -84,7 +88,7 @@ class MessengerRepository {
     val registerProfileSucces: LiveData<Boolean>
         get() = _registerProfile
 
-    fun setUser(user: UserInfo){
+    fun setUser(user: UserInfo) {
         _toUser.value = user
     }
 
@@ -180,13 +184,13 @@ class MessengerRepository {
     }
 
     fun getData() {
-            _userItems1.value?.clear()
-            retrieveUsers(object : FirebaseCallback {
-                override fun onCallback(list: ArrayList<UserInfo>) {
-                    _userItems1.value = list
-                    _fetchedUsers.value = true
-                }
-            })
+        _userItems1.value?.clear()
+        retrieveUsers(object : FirebaseCallback {
+            override fun onCallback(list: ArrayList<UserInfo>) {
+                _userItems1.value = list
+                _fetchedUsers.value = true
+            }
+        })
     }
 
     fun retrieveMessages(user: UserInfo) {
@@ -199,28 +203,29 @@ class MessengerRepository {
     }
 
     private fun callbackCurrentUser() {
-            getCurrentUser(object : FirebaseCurrentUserCallBack {
-                override fun onCallback(user: UserInfo) {
-                    currentUser = user
-                }
-            })
+        getCurrentUser(object : FirebaseCurrentUserCallBack {
+            override fun onCallback(user: UserInfo) {
+                currentUser = user
+            }
+        })
     }
 
     private fun getCurrentUser(firebaseCurrentUserCallBack: FirebaseCurrentUserCallBack) {
-            currentUser1 == null
-            val uid = firestoreAuth.uid
-            Log.d("test", uid.toString())
-            val ref = firebaseDatabase.getReference("/users/$uid")
-            ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    currentUser1 = snapshot.getValue(UserInfo::class.java)
-                    Log.d("currentuser", currentUser1.toString())
-                    firebaseCurrentUserCallBack.onCallback(currentUser1!!)
-                }
+        currentUser1 == null
+        val uid = firestoreAuth.uid
+        Log.d("test", uid.toString())
+        val ref = firebaseDatabase.getReference("/users/$uid")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                currentUser1 = snapshot.getValue(UserInfo::class.java)
+                Log.d("currentuser", currentUser1.toString())
+                firebaseCurrentUserCallBack.onCallback(currentUser1!!)
+            }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
+
     // NOT CORRECTLY WORKING. NOT SHOWING THE MESSAGES
     private fun getMessages(
         firebaseMessagesCallback: FirebaseMessagesCallbackGroup,
@@ -277,7 +282,7 @@ class MessengerRepository {
             val toReference = firebaseDatabase.getReference("/user-message/$toId/$userId").push()
             val id = reference.key ?: return@launch
             val chatObject = ChatMessage(id, text, userId, toId, System.currentTimeMillis())
-            reference.setValue(chatObject)
+            reference.setValue(chatObject).addOnSuccessListener { _messageSendSuccesful.value = true }
             toReference.setValue(chatObject)
         }
     }
