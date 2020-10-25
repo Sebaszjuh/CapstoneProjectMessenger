@@ -1,13 +1,17 @@
 package com.sgriendt.capstoneproject.Repository
 
+import android.app.ActivityManager
+import android.content.Context.ACTIVITY_SERVICE
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.sgriendt.capstoneproject.Interfaces.FirebaseCallback
+import com.sgriendt.capstoneproject.Interfaces.FirebaseCurrentUserCallBack
+import com.sgriendt.capstoneproject.Interfaces.FirebaseMessagesCallbackGroup
 import com.sgriendt.capstoneproject.Model.ChatMessage
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
@@ -15,15 +19,16 @@ import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
 import com.sgriendt.capstoneproject.UI.Messages.ChatTo
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.*
-import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.withTimeout
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 class MessengerRepository {
-    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    //    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var firestoreAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestoreStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -33,27 +38,24 @@ class MessengerRepository {
     private var currentUser: UserInfo? = null
     private var currentUser1: UserInfo? = null
 
-    //    private var userUserItems = arrayListOf<UserInfo>()
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
     private val _user: MutableLiveData<User> = MutableLiveData()
-
-    val user: LiveData<User>
-        get() = _user
+//
+//    val user: LiveData<User>
+//        get() = _user
 
 
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
-    private val _loginSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
     private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
-    private val _isNotLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
-    private val _isLoggedOut: MutableLiveData<Boolean> = MutableLiveData()
     private val _fetchedUsers: MutableLiveData<Boolean> = MutableLiveData()
     private val _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
     private val _fetchedMessages: MutableLiveData<Boolean> = MutableLiveData()
     private val _groupAdapter: MutableLiveData<GroupAdapter<GroupieViewHolder>> = MutableLiveData()
     private val _toUser: MutableLiveData<UserInfo> = MutableLiveData()
     private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
+    private val _createFailure: MutableLiveData<Boolean> = MutableLiveData()
 
     val getMessageSendSuccesful
         get() = _messageSendSuccesful
@@ -70,20 +72,16 @@ class MessengerRepository {
     val isFetchedUsers: LiveData<Boolean>
         get() = _fetchedUsers
 
+    val createFailure: LiveData<Boolean>
+        get() = _createFailure
+
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
-    val isNotLoggedIn: LiveData<Boolean>
-        get() = _isNotLoggedIn
-
-    val isLoggedOut: LiveData<Boolean>
-        get() = _isLoggedOut
 
     val createSuccess: LiveData<Boolean>
         get() = _createSuccess
 
-    val loginSuccess: LiveData<Boolean>
-        get() = _loginSuccess
 
     val registerProfileSucces: LiveData<Boolean>
         get() = _registerProfile
@@ -102,22 +100,16 @@ class MessengerRepository {
                     }.await()
             }
         } catch (e: Exception) {
+            _createFailure.value = true
             throw UserSaveError(e.message.toString(), e)
         }
     }
 
     suspend fun signInUser(user: User) {
-        try {
-            withTimeout(5_000) {
-                firestoreAuth.signInWithEmailAndPassword(user.email, user.password)
-                    .addOnCompleteListener {
-                        if (!it.isSuccessful) return@addOnCompleteListener
-                        _loginSuccess.value = true
-                    }.await()
-            }
-        } catch (e: Exception) {
-            throw UserLoginError(e.message.toString(), e)
-        }
+        firestoreAuth.signInWithEmailAndPassword(user.email, user.password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+            }.await()
     }
 
     /**
@@ -125,7 +117,9 @@ class MessengerRepository {
      */
     fun signOut() {
         firestoreAuth.signOut()
-        _isLoggedOut.value = true
+        val uid = FirebaseAuth.getInstance().uid
+        _isLoggedIn.value = false
+        Log.d("LOGGED OUT UID", "$uid")
     }
 
     /**
@@ -135,9 +129,9 @@ class MessengerRepository {
     fun checkIfLoggedIn() {
         val uid = FirebaseAuth.getInstance().uid
         if (uid == null) {
-            _isNotLoggedIn.value = true
-        } else {
-            _isLoggedIn.value = true
+            Log.d("UID", "UID ME $uid")
+//            _isNotLoggedIn.value = true
+            _isLoggedIn.value = false
         }
     }
 
@@ -146,7 +140,6 @@ class MessengerRepository {
      */
     suspend fun uploadURI(uri: Uri, username: String) {
         try {
-            //firestore has support for coroutines via the extra dependency we've added :)
             withTimeout(5_000) {
                 val filename = UUID.randomUUID().toString()
                 val ref = firestoreStorage.getReference("/images/$filename")
@@ -156,7 +149,6 @@ class MessengerRepository {
                         ref.downloadUrl.addOnSuccessListener {
                             saveUserToFirebaseDatabase(it.toString(), username)
                         }
-                        _loginSuccess.value = true
                     }.await()
             }
         } catch (e: Exception) {
@@ -226,14 +218,12 @@ class MessengerRepository {
         })
     }
 
-    // NOT CORRECTLY WORKING. NOT SHOWING THE MESSAGES
     private fun getMessages(
         firebaseMessagesCallback: FirebaseMessagesCallbackGroup,
         user: UserInfo
     ) {
         callbackCurrentUser()
         adapter.clear()
-//        val toId: String? = _toUser.value?.uid
         val userId = firestoreAuth.uid
         val toId = user.uid
         Log.d("REPO", "$toId and $userId")
@@ -282,7 +272,8 @@ class MessengerRepository {
             val toReference = firebaseDatabase.getReference("/user-message/$toId/$userId").push()
             val id = reference.key ?: return@launch
             val chatObject = ChatMessage(id, text, userId, toId, System.currentTimeMillis())
-            reference.setValue(chatObject).addOnSuccessListener { _messageSendSuccesful.value = true }
+            reference.setValue(chatObject)
+                .addOnSuccessListener { _messageSendSuccesful.value = true }
             toReference.setValue(chatObject)
         }
     }
@@ -294,24 +285,3 @@ class MessengerRepository {
     class UserMessageError(message: String, cause: Throwable) : Exception(message, cause)
 }
 
-/**
- * Callback used to the retrieval of the users.
- */
-interface FirebaseCallback {
-    fun onCallback(list: ArrayList<UserInfo>)
-}
-
-interface FirebaseMessagesCallbackGroup {
-    fun onCallback(listTo: GroupAdapter<GroupieViewHolder>)
-}
-
-interface FirebaseCurrentUserCallBack {
-    fun onCallback(user: UserInfo)
-}
-
-object DateUtils1 {
-    fun fromMillisToTimeString(millis: Long): String {
-        val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        return format.format(millis)
-    }
-}

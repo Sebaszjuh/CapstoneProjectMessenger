@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -33,7 +34,6 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btn_login_login.setOnClickListener { onLoginClick() }
-        observeLoginSuccess()
     }
 
     private fun onLoginClick() {
@@ -42,16 +42,11 @@ class LoginFragment : Fragment() {
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
                 Log.d("Password", "$password")
-                Log.d("emaik", "$email")
+                Log.d("email", "$email")
                 viewModel.loginUser(email, password)
+                findNavController().navigate(R.id.latestMessageFragment)
             }
         }
-    }
-
-    private fun observeLoginSuccess() {
-        viewModel.loginSuccess.observe(viewLifecycleOwner, Observer {
-            findNavController().navigate(R.id.latestMessageFragment)
-        })
     }
 
     private fun checkEmailValidation(email: String): Boolean {

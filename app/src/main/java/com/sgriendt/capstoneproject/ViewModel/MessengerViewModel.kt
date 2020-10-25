@@ -26,11 +26,9 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     private val _errorText: MutableLiveData<String> = MutableLiveData()
 
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
-    val loginSuccess: LiveData<Boolean> = messengerRepository.loginSuccess
+    val createFailure: LiveData<Boolean> = messengerRepository.createFailure
     val registerProfileSucces: LiveData<Boolean> = messengerRepository.registerProfileSucces
     val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
-    val isNotLoggedin: LiveData<Boolean> = messengerRepository.isNotLoggedIn
-    val isLoggedOut: LiveData<Boolean> = messengerRepository.isLoggedOut
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
     val fetchedMessages: LiveData<Boolean> = messengerRepository.isMessagedFetched

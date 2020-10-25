@@ -7,6 +7,8 @@
     <string name="btn_register">Register</string>
     <string name="alreadyRegistered_toLogin">Already Registered Click here</string>
     <string name="succes">Successfully created user</string>
+    <string name="failure">An error occurred creating the account, please try again</string>
+    <string name="login_failure">An error occurred login the account, please try again</string>
     <string name="loggedIn">Successfully Logged in</string>
     <string name="select_photo">Select Photo</string>
 

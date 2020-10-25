@@ -41,6 +41,7 @@ class RegisterFragment : Fragment() {
         btn_register.setOnClickListener { registerNewAccount() }
 
         observeUserCreation()
+        observeUserFailure()
     }
 
     private fun goToLogin() {
@@ -49,7 +50,6 @@ class RegisterFragment : Fragment() {
 
     //TODO RETURN MESSAGE IF EMAILADDRESS IS ALREADY IN USE
 
-    //CHECK PICTURE
     private fun registerNewAccount() {
         val email = email_edit_txt_reg.text.toString()
         val password = password_edit_txt_reg.text.toString()
@@ -72,6 +72,13 @@ class RegisterFragment : Fragment() {
             findNavController().navigate(R.id.latestMessageFragment)
         })
     }
+
+    private fun observeUserFailure() {
+        viewModel.createFailure.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(activity, R.string.failure, Toast.LENGTH_LONG).show()
+        })
+    }
+
     private fun onGalleryClick() {
         // Create an Intent with action as ACTION_PICK
         val galleryIntent = Intent(Intent.ACTION_PICK)
