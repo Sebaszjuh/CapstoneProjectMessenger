@@ -274,6 +274,12 @@ class MessengerRepository {
             reference.setValue(chatObject)
                 .addOnSuccessListener { _messageSendSuccesful.value = true }
             toReference.setValue(chatObject)
+
+            val latestMessageRef = firebaseDatabase.getReference("/latest-messages/$userId/$toId")
+            latestMessageRef.setValue(chatObject)
+
+            val latestMessageToRef = firebaseDatabase.getReference("/latest-messages/$toId/$userId")
+            latestMessageToRef.setValue(chatObject)
         }
     }
 

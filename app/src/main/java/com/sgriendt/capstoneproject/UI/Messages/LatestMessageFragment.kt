@@ -8,6 +8,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Item
+import kotlinx.android.synthetic.main.fragment_latest_message.*
 
 
 class LatestMessageFragment : Fragment() {
@@ -26,6 +30,12 @@ class LatestMessageFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupDummyMessages()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -44,6 +54,25 @@ class LatestMessageFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_nav, menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    fun setupDummyMessages(){
+        val adapter = GroupAdapter<GroupieViewHolder>()
+        adapter.add(LatestItemRow())
+        adapter.add(LatestItemRow())
+
+        rv_latest_messages.adapter = adapter
+    }
+
+}
+
+class LatestItemRow: Item<GroupieViewHolder>(){
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+
+    }
+
+    override fun getLayout(): Int {
+        return R.layout.latest_message
     }
 
 }

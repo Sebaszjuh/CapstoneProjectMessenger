@@ -6,15 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".UI.Messages.LatestMessageFragment">
 
-    <Button
-        android:id="@+id/log_out_btn_quick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="163dp"
-        android:layout_marginTop="307dp"
-        android:layout_marginEnd="160dp"
-        android:layout_marginBottom="376dp"
-        android:text="Button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_latest_messages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
