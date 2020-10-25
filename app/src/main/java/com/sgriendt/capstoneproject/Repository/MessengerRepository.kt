@@ -1,7 +1,5 @@
 package com.sgriendt.capstoneproject.Repository
 
-import android.app.ActivityManager
-import android.content.Context.ACTIVITY_SERVICE
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -24,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -233,10 +232,10 @@ class MessengerRepository {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage?.toId == firestoreAuth.uid) {
                     val toUser = user
-                    adapter.add(ChatFrom(chatMessage?.text!!, toUser))
+                    adapter.add(ChatFrom(chatMessage?.text!!, toUser, DateUtilitites.fromMillisToTimeString(chatMessage.timestamp) ))
                 } else {
                     Log.d("currentuser", currentUser.toString())
-                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!!))
+                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!!, DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)))
                 }
                 firebaseMessagesCallback.onCallback(adapter)
             }
@@ -285,3 +284,9 @@ class MessengerRepository {
     class UserMessageError(message: String, cause: Throwable) : Exception(message, cause)
 }
 
+object DateUtilitites {
+    fun fromMillisToTimeString(millis: Long): String {
+        val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        return format.format(millis)
+    }
+}

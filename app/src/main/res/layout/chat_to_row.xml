@@ -28,7 +28,6 @@
         android:backgroundTint="@android:color/white"
         android:padding="16dp"
         android:maxWidth="220dp"
-        android:text="Very long message thing, lets see what happens with this message yo"
         app:layout_constraintEnd_toStartOf="@+id/profileImage_to_chat"
         app:layout_constraintTop_toTopOf="@+id/profileImage_to_chat" />
 
@@ -36,8 +35,12 @@
         android:id="@+id/timeText_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="60dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="62dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/chat_message_to"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

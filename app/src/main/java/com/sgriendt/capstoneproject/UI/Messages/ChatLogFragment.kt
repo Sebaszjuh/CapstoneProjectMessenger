@@ -99,10 +99,11 @@ class ChatLogFragment : Fragment() {
     }
 }
 
-class ChatTo(val text: String, val user: UserInfo) : Item<GroupieViewHolder>() {
+class ChatTo(val text: String, val user: UserInfo, val time: String) : Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.chat_message_to.text = text
         val uri = user.profileImageUrl
+        viewHolder.itemView.timeText_to.text = time
         val profileImage = viewHolder.itemView.profileImage_to_chat
         Picasso.get().load(uri).into(profileImage)
     }
@@ -112,9 +113,10 @@ class ChatTo(val text: String, val user: UserInfo) : Item<GroupieViewHolder>() {
     }
 }
 
-class ChatFrom(val text: String, val user: UserInfo) : Item<GroupieViewHolder>() {
+class ChatFrom(val text: String, val user: UserInfo, val time: String) : Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.chat_message_from.text = text
+        viewHolder.itemView.timeText_from.text = time
         val uri = user.profileImageUrl
         val profileImage = viewHolder.itemView.profileImage_from_chat
         Picasso.get().load(uri).into(profileImage)

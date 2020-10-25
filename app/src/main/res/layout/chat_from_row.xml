@@ -28,7 +28,6 @@
         android:background="@drawable/rounded_edittxt_register"
         android:backgroundTint="@android:color/white"
         android:padding="16dp"
-        android:text="Very long message thing, lets see what happens with this message yo"
         app:layout_constraintStart_toEndOf="@+id/profileImage_from_chat"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,10 +35,13 @@
         android:id="@+id/timeText_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:text="TextView"
+        android:layout_marginTop="62dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chat_message_from" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
