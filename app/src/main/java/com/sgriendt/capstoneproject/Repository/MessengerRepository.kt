@@ -15,6 +15,7 @@ import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
 import com.sgriendt.capstoneproject.UI.Messages.ChatTo
+import com.sgriendt.capstoneproject.UI.Messages.LatestItemRow
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class MessengerRepository {
@@ -38,6 +40,7 @@ class MessengerRepository {
     private var currentUser1: UserInfo? = null
 
     private val adapter = GroupAdapter<GroupieViewHolder>()
+    private val latestMessagesAdapter = GroupAdapter<GroupieViewHolder>()
 
     private val _user: MutableLiveData<User> = MutableLiveData()
 //
@@ -55,6 +58,7 @@ class MessengerRepository {
     private val _toUser: MutableLiveData<UserInfo> = MutableLiveData()
     private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
     private val _createFailure: MutableLiveData<Boolean> = MutableLiveData()
+    private val _latestMessagesHash: MutableLiveData<HashMap<String, ChatMessage>> = MutableLiveData()
 
     val getMessageSendSuccesful
         get() = _messageSendSuccesful
@@ -261,6 +265,38 @@ class MessengerRepository {
 
             override fun onCancelled(error: DatabaseError) {
             }
+        })
+    }
+
+    private fun refreshRecyclerView(){
+        latestMessagesAdapter.clear()
+        _latestMessagesHash.value!!.values.forEach {
+            latestMessagesAdapter.add(LatestItemRow(it))
+        }
+    }
+
+
+    private fun getLatestMessage(){
+
+        val userId = firestoreAuth.uid
+        val ref = firebaseDatabase.getReference("/latest-message/$userId")
+        ref.addChildEventListener(object: ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+              val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                _latestMessagesHash.value!![snapshot.key!!] = chatMessage
+                refreshRecyclerView()
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                _latestMessagesHash.value!![snapshot.key!!] = chatMessage
+                refreshRecyclerView()
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+
         })
     }
 
