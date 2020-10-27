@@ -290,6 +290,7 @@ class MessengerRepository {
     }
 
     fun callbackLatestMessage() {
+        _latestMessage.value?.clear()
         getLatestMessage(object : FirebaseLatestMessageCallBack {
             override fun onCallBack(latestMessages: GroupAdapter<GroupieViewHolder>) {
                 _latestMessage.value = latestMessages
@@ -304,6 +305,7 @@ class MessengerRepository {
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessagesAdapter.clear()
                 latestMessagesAdapter.add(LatestItemRow(chatMessage))
                 firebaseCallBack.onCallBack(latestMessagesAdapter)
             }

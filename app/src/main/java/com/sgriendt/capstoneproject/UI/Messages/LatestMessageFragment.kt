@@ -53,10 +53,11 @@ class LatestMessageFragment : Fragment() {
     }
 
     private fun retrieveLatestMessage() {
-        val adapter: GroupAdapter<GroupieViewHolder>
+
+        var adapter: GroupAdapter<GroupieViewHolder>
         val messages = viewModel.latestMessage
-        Log.d("YES", messages.toString())
         adapter = messages.value!!
+//        messages.value!!.clear()
         rv_latest_messages.layoutManager = LinearLayoutManager(activity)
         rv_latest_messages.adapter = adapter
     }
