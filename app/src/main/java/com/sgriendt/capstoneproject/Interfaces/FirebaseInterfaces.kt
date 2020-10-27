@@ -18,3 +18,7 @@ interface FirebaseMessagesCallbackGroup {
 interface FirebaseCurrentUserCallBack {
     fun onCallback(user: UserInfo)
 }
+
+interface FirebaseLatestMessageCallBack{
+    fun onCallBack(latestMessages: GroupAdapter<GroupieViewHolder>)
+}

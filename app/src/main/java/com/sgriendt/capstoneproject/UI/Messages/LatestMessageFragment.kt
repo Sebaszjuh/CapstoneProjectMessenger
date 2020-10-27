@@ -2,16 +2,21 @@ package com.sgriendt.capstoneproject.UI.Messages
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgriendt.capstoneproject.Model.ChatMessage
+import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
+import kotlinx.android.synthetic.main.fragment_chat_log.*
 import kotlinx.android.synthetic.main.fragment_latest_message.*
 import kotlinx.android.synthetic.main.latest_message.view.*
 
@@ -35,9 +40,26 @@ class LatestMessageFragment : Fragment() {
 
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getLatestMessage()
+        observeMessagesAreFetched()
+    }
+
+    private fun observeMessagesAreFetched() {
+        viewModel.latestMessageFetched.observe(viewLifecycleOwner, Observer {
+            retrieveLatestMessage()
+        })
+    }
+
+    private fun retrieveLatestMessage() {
+        val adapter: GroupAdapter<GroupieViewHolder>
+        val messages = viewModel.latestMessage
+        Log.d("YES", messages.toString())
+        adapter = messages.value!!
+        rv_latest_messages.layoutManager = LinearLayoutManager(activity)
+        rv_latest_messages.adapter = adapter
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -59,9 +81,10 @@ class LatestMessageFragment : Fragment() {
 
 }
 
-class LatestItemRow(val chatMessage: ChatMessage): Item<GroupieViewHolder>(){
+class LatestItemRow(val chatMessage: ChatMessage) : Item<GroupieViewHolder>() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.itemView.username_textview_latest_message.text = chatMessage.text
+        viewHolder.itemView.message_textview_latest_message.text = chatMessage.text
+
     }
 
     override fun getLayout(): Int {

@@ -31,8 +31,10 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
+    val latestMessageFetched: LiveData<Boolean> = messengerRepository.latestMessagesFetched
     val fetchedMessages: LiveData<Boolean> = messengerRepository.isMessagedFetched
     val groupAdapter: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getGroupAdapter
+    val latestMessage: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getLatestMessage
     val succesfulSendMessage: LiveData<Boolean> = messengerRepository.getMessageSendSuccesful
 
     val errorText: LiveData<String>
@@ -102,6 +104,17 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 messengerRepository.retrieveMessages(user)
                 Log.d(TAG, "RETRIEVING VIEW MESSAGES")
+            } catch (e: Exception) {
+                Log.d("BROKEN", e.toString())
+            }
+        }
+    }
+
+    fun getLatestMessage(){
+        viewModelScope.launch {
+            try {
+                messengerRepository.callbackLatestMessage()
+                Log.d(TAG, "RETRIEVING LATEST MESSAGES VIEW")
             } catch (e: Exception) {
                 Log.d("BROKEN", e.toString())
             }

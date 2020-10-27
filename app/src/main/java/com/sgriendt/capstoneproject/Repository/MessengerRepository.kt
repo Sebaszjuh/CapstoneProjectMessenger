@@ -9,7 +9,9 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.sgriendt.capstoneproject.Interfaces.FirebaseCallback
 import com.sgriendt.capstoneproject.Interfaces.FirebaseCurrentUserCallBack
+import com.sgriendt.capstoneproject.Interfaces.FirebaseLatestMessageCallBack
 import com.sgriendt.capstoneproject.Interfaces.FirebaseMessagesCallbackGroup
+import com.sgriendt.capstoneproject.Model.Chat
 import com.sgriendt.capstoneproject.Model.ChatMessage
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
@@ -39,6 +41,7 @@ class MessengerRepository {
     private var currentUser: UserInfo? = null
     private var currentUser1: UserInfo? = null
 
+
     private val adapter = GroupAdapter<GroupieViewHolder>()
     private val latestMessagesAdapter = GroupAdapter<GroupieViewHolder>()
 
@@ -55,16 +58,24 @@ class MessengerRepository {
     private val _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
     private val _fetchedMessages: MutableLiveData<Boolean> = MutableLiveData()
     private val _groupAdapter: MutableLiveData<GroupAdapter<GroupieViewHolder>> = MutableLiveData()
+    private val _latestMessage: MutableLiveData<GroupAdapter<GroupieViewHolder>> = MutableLiveData()
     private val _toUser: MutableLiveData<UserInfo> = MutableLiveData()
     private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
+    private val _latestMessagesFetched: MutableLiveData<Boolean> = MutableLiveData()
     private val _createFailure: MutableLiveData<Boolean> = MutableLiveData()
-    private val _latestMessagesHash: MutableLiveData<HashMap<String, ChatMessage>> = MutableLiveData()
+//    private val _latestMessagesHash: MutableLiveData<HashMap<String, ChatMessage>> = MutableLiveData()
 
     val getMessageSendSuccesful
         get() = _messageSendSuccesful
 
+    val latestMessagesFetched
+        get() = _latestMessagesFetched
+
     val getGroupAdapter: LiveData<GroupAdapter<GroupieViewHolder>>
         get() = _groupAdapter
+
+    val getLatestMessage: LiveData<GroupAdapter<GroupieViewHolder>>
+        get() = _latestMessage
 
     val isMessagedFetched: LiveData<Boolean>
         get() = _fetchedMessages
@@ -229,17 +240,27 @@ class MessengerRepository {
         adapter.clear()
         val userId = firestoreAuth.uid
         val toId = user.uid
-        Log.d("REPO", "$toId and $userId")
         val refMessages = firebaseDatabase.getReference("/user-message/$userId/$toId")
         refMessages.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage?.toId == firestoreAuth.uid) {
                     val toUser = user
-                    adapter.add(ChatFrom(chatMessage?.text!!, toUser, DateUtilitites.fromMillisToTimeString(chatMessage.timestamp) ))
+                    adapter.add(
+                        ChatFrom(
+                            chatMessage?.text!!,
+                            toUser,
+                            DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)
+                        )
+                    )
                 } else {
-                    Log.d("currentuser", currentUser.toString())
-                    adapter.add(ChatTo(chatMessage?.text!!, currentUser!!, DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)))
+                    adapter.add(
+                        ChatTo(
+                            chatMessage?.text!!,
+                            currentUser!!,
+                            DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)
+                        )
+                    )
                 }
                 firebaseMessagesCallback.onCallback(adapter)
             }
@@ -268,29 +289,30 @@ class MessengerRepository {
         })
     }
 
-    private fun refreshRecyclerView(){
-        latestMessagesAdapter.clear()
-        _latestMessagesHash.value!!.values.forEach {
-            latestMessagesAdapter.add(LatestItemRow(it))
-        }
+    fun callbackLatestMessage() {
+        getLatestMessage(object : FirebaseLatestMessageCallBack {
+            override fun onCallBack(latestMessages: GroupAdapter<GroupieViewHolder>) {
+                _latestMessage.value = latestMessages
+                _latestMessagesFetched.value = true
+            }
+        })
     }
 
-
-    private fun getLatestMessage(){
-
+    private fun getLatestMessage(firebaseCallBack: FirebaseLatestMessageCallBack) {
         val userId = firestoreAuth.uid
-        val ref = firebaseDatabase.getReference("/latest-message/$userId")
-        ref.addChildEventListener(object: ChildEventListener{
+        val ref = firebaseDatabase.getReference("/latest-messages/$userId")
+        ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-              val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
-                _latestMessagesHash.value!![snapshot.key!!] = chatMessage
-                refreshRecyclerView()
+                val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessagesAdapter.add(LatestItemRow(chatMessage))
+                firebaseCallBack.onCallBack(latestMessagesAdapter)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
-                _latestMessagesHash.value!![snapshot.key!!] = chatMessage
-                refreshRecyclerView()
+                latestMessagesAdapter.clear()
+                latestMessagesAdapter.add(LatestItemRow(chatMessage))
+                firebaseCallBack.onCallBack(latestMessagesAdapter)
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {}
