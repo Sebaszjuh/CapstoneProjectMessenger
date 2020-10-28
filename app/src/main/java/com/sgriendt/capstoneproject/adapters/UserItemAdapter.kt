@@ -15,8 +15,6 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun databind(userInfo: UserInfo) {
-//            itemView.userName.text = userInfo.username
-//            Picasso.get().load(userInfo.profileImageUrl).into(itemView.profileImage.profileImage)
 
         }
 

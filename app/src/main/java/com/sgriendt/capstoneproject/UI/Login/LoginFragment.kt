@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -26,7 +24,6 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         activity?.title = "Login"
         return inflater.inflate(R.layout.fragment_login, container, false)
     }

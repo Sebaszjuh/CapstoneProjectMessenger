@@ -1,6 +1,5 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -10,22 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.sgriendt.capstoneproject.Model.ChatMessage
-import com.sgriendt.capstoneproject.Model.UserInfo
+import com.sgriendt.capstoneproject.Model.LatestItemRow
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
-import kotlinx.android.synthetic.main.fragment_chat_log.*
 import kotlinx.android.synthetic.main.fragment_latest_message.*
-import kotlinx.android.synthetic.main.latest_message.view.*
 
 
 class LatestMessageFragment : Fragment() {
@@ -51,26 +40,11 @@ class LatestMessageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getLatestMessage()
         observeMessagesAreFetched()
-
     }
 
-    private fun observeMessagesAreFetched() {
-        viewModel.latestMessageFetched.observe(viewLifecycleOwner, Observer {
-            retrieveLatestMessage()
-        })
-    }
-
-    private fun retrieveLatestMessage() {
-        val adapter: GroupAdapter<GroupieViewHolder>
-        val messages = viewModel.latestMessage
-        adapter = messages.value!!
-        rv_latest_messages.layoutManager = LinearLayoutManager(activity)
-        rv_latest_messages.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        rv_latest_messages.adapter = adapter
-
-
-    }
-
+    /**
+     * Navigation for buttons in the menu bar
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_sign_out -> {
@@ -87,6 +61,38 @@ class LatestMessageFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_nav, menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    /**
+     * Observers if latestmessages boolean changed and then calls retrievelatestmessage
+     */
+    private fun observeMessagesAreFetched() {
+        viewModel.latestMessageFetched.observe(viewLifecycleOwner, Observer {
+            retrieveLatestMessage()
+        })
+    }
+
+    /**
+     * Retrieves the actual messages and sets the adapter to the latestmessages
+     */
+    private fun retrieveLatestMessage() {
+        val adapter: GroupAdapter<GroupieViewHolder>
+        val messages = viewModel.latestMessage
+        adapter = messages.value!!
+        rv_latest_messages.layoutManager = LinearLayoutManager(activity)
+        rv_latest_messages.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        rv_latest_messages.adapter = adapter
+
+
+        adapter.setOnItemClickListener { item, view ->
+            Log.d("TAG", "123")
+            val bundle = Bundle()
+
+            val row = item as LatestItemRow
+            bundle.putParcelable("usernameSelected", row.chatPartner)
+            findNavController().navigate(R.id.chatLogFragment, bundle)
+        }
+
     }
 
 }

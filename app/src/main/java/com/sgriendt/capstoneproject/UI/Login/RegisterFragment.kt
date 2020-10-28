@@ -79,7 +79,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onGalleryClick() {
-        // Create an Intent with action as ACTION_PICK
         val galleryIntent = Intent(Intent.ACTION_PICK)
         galleryIntent.type = "image/*"
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
@@ -100,6 +99,9 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    /**
+     * Methods
+     */
     private fun checkEmailValidation(email: String): Boolean {
         return if (email.isNullOrBlank() || !email.contains("@")) {
             Toast.makeText(context, R.string.emailInvalidation, Toast.LENGTH_LONG).show()

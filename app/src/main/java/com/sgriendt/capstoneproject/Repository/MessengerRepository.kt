@@ -8,10 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.sgriendt.capstoneproject.Interfaces.*
-
 import com.sgriendt.capstoneproject.Model.*
-import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
-import com.sgriendt.capstoneproject.UI.Messages.ChatTo
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.CoroutineScope
@@ -157,6 +154,10 @@ class MessengerRepository {
         }
     }
 
+    /**
+     * Method that gets called when URI upload is sucessful. Sends data to firebase under /users/$uid
+     * Sets mutablelivedata vlaues
+     */
     private fun saveUserToFirebaseDatabase(profileImageUri: String, username: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -176,6 +177,9 @@ class MessengerRepository {
         }
     }
 
+    /**
+     * Callback for asynchronous loading from firebase to retrieve the users
+     */
     fun getData() {
         _userItems1.value?.clear()
         retrieveUsers(object : FirebaseCallback {
@@ -186,6 +190,9 @@ class MessengerRepository {
         })
     }
 
+    /**
+     * Callback for asynchronous loading from firebase to retrieve all the messages per user. Forwards Userinfo to getmessages method.
+     */
     fun retrieveMessages(user: UserInfo) {
         getMessages(object : FirebaseMessagesCallbackGroup {
             override fun onCallback(listTo: GroupAdapter<GroupieViewHolder>) {
@@ -195,6 +202,10 @@ class MessengerRepository {
         }, user)
     }
 
+
+    /**
+     * Callback for asynchronous loading from firebase to retrieve the current user
+     */
     private fun callbackCurrentUser() {
         getCurrentUser(object : FirebaseCurrentUserCallBack {
             override fun onCallback(user: UserInfo) {
@@ -277,7 +288,7 @@ class MessengerRepository {
     }
 
     fun callbackLatestMessage() {
-        _latestMessage.value?.clear()
+//        _latestMessage.value?.clear()
         getLatestMessage(object : FirebaseLatestMessageCallBack {
             override fun onCallBack(latestMessages: GroupAdapter<GroupieViewHolder>) {
                 _latestMessage.value = latestMessages
@@ -287,9 +298,7 @@ class MessengerRepository {
     }
 
 
-
     private fun getLatestMessage(firebaseCallBack: FirebaseLatestMessageCallBack) {
-
         val userId = firestoreAuth.uid
         val ref = firebaseDatabase.getReference("/latest-messages/$userId")
         ref.addChildEventListener(object : ChildEventListener {
@@ -298,7 +307,6 @@ class MessengerRepository {
                 latestMessageHashMap[snapshot.key!!] = chatMessage
                 latestMessagesAdapter.clear()
                 latestMessageHashMap.values.forEach {
-
                     latestMessagesAdapter.add(LatestItemRow(it))
                 }
 
@@ -310,7 +318,6 @@ class MessengerRepository {
                 latestMessageHashMap[snapshot.key!!] = chatMessage
                 latestMessagesAdapter.clear()
                 latestMessageHashMap.values.forEach {
-
                     latestMessagesAdapter.add(LatestItemRow(it))
                 }
             }

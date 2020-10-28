@@ -10,13 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.sgriendt.capstoneproject.Model.User
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.Repository.MessengerRepository
-import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
-import com.sgriendt.capstoneproject.UI.Messages.ChatTo
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MessengerViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,7 +22,6 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
 
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
     val createFailure: LiveData<Boolean> = messengerRepository.createFailure
-    val registerProfileSucces: LiveData<Boolean> = messengerRepository.registerProfileSucces
     val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
@@ -37,11 +31,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val latestMessage: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getLatestMessage
     val succesfulSendMessage: LiveData<Boolean> = messengerRepository.getMessageSendSuccesful
 
-    val errorText: LiveData<String>
-        get() = _errorText
-
     fun createUser(email: String, password: String) {
-        // persist data to firestore
         val user = User(email, password)
         viewModelScope.launch {
             try {
@@ -103,9 +93,8 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 messengerRepository.retrieveMessages(user)
-                Log.d(TAG, "RETRIEVING VIEW MESSAGES")
             } catch (e: Exception) {
-                Log.d("BROKEN", e.toString())
+                Log.d(TAG, e.toString())
             }
         }
     }
@@ -114,9 +103,8 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 messengerRepository.callbackLatestMessage()
-                Log.d(TAG, "RETRIEVING LATEST MESSAGES VIEW")
             } catch (e: Exception) {
-                Log.d("BROKEN", e.toString())
+                Log.d(TAG, e.toString())
             }
         }
     }
