@@ -7,17 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import com.sgriendt.capstoneproject.Interfaces.FirebaseCallback
-import com.sgriendt.capstoneproject.Interfaces.FirebaseCurrentUserCallBack
-import com.sgriendt.capstoneproject.Interfaces.FirebaseLatestMessageCallBack
-import com.sgriendt.capstoneproject.Interfaces.FirebaseMessagesCallbackGroup
-import com.sgriendt.capstoneproject.Model.Chat
-import com.sgriendt.capstoneproject.Model.ChatMessage
-import com.sgriendt.capstoneproject.Model.User
-import com.sgriendt.capstoneproject.Model.UserInfo
+import com.sgriendt.capstoneproject.Interfaces.*
+
+import com.sgriendt.capstoneproject.Model.*
 import com.sgriendt.capstoneproject.UI.Messages.ChatFrom
 import com.sgriendt.capstoneproject.UI.Messages.ChatTo
-import com.sgriendt.capstoneproject.UI.Messages.LatestItemRow
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +25,6 @@ import kotlin.collections.HashMap
 
 
 class MessengerRepository {
-    //    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var firestoreAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestoreStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -45,12 +38,6 @@ class MessengerRepository {
     private val adapter = GroupAdapter<GroupieViewHolder>()
     private val latestMessagesAdapter = GroupAdapter<GroupieViewHolder>()
 
-    private val _user: MutableLiveData<User> = MutableLiveData()
-//
-//    val user: LiveData<User>
-//        get() = _user
-
-
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
     private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
@@ -63,7 +50,7 @@ class MessengerRepository {
     private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
     private val _latestMessagesFetched: MutableLiveData<Boolean> = MutableLiveData()
     private val _createFailure: MutableLiveData<Boolean> = MutableLiveData()
-//    private val _latestMessagesHash: MutableLiveData<HashMap<String, ChatMessage>> = MutableLiveData()
+    private val latestMessageHashMap = HashMap<String, ChatMessage>()
 
     val getMessageSendSuccesful
         get() = _messageSendSuccesful
@@ -299,22 +286,33 @@ class MessengerRepository {
         })
     }
 
+
+
     private fun getLatestMessage(firebaseCallBack: FirebaseLatestMessageCallBack) {
+
         val userId = firestoreAuth.uid
         val ref = firebaseDatabase.getReference("/latest-messages/$userId")
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessageHashMap[snapshot.key!!] = chatMessage
                 latestMessagesAdapter.clear()
-                latestMessagesAdapter.add(LatestItemRow(chatMessage))
+                latestMessageHashMap.values.forEach {
+
+                    latestMessagesAdapter.add(LatestItemRow(it))
+                }
+
                 firebaseCallBack.onCallBack(latestMessagesAdapter)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java) ?: return
+                latestMessageHashMap[snapshot.key!!] = chatMessage
                 latestMessagesAdapter.clear()
-                latestMessagesAdapter.add(LatestItemRow(chatMessage))
-                firebaseCallBack.onCallBack(latestMessagesAdapter)
+                latestMessageHashMap.values.forEach {
+
+                    latestMessagesAdapter.add(LatestItemRow(it))
+                }
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {}

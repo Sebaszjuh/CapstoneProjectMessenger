@@ -29,7 +29,6 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         activity?.title = "Register"
         return inflater.inflate(R.layout.fragment_register, container, false)
     }
@@ -51,9 +50,9 @@ class RegisterFragment : Fragment() {
     //TODO RETURN MESSAGE IF EMAILADDRESS IS ALREADY IN USE
 
     private fun registerNewAccount() {
-        val email = email_edit_txt_reg.text.toString()
-        val password = password_edit_txt_reg.text.toString()
-        val username = username_edit_txt_reg.text.toString()
+        val email = email_edit_txt_reg.text.toString().trim()
+        val password = password_edit_txt_reg.text.toString().trim()
+        val username = username_edit_txt_reg.text.toString().trim()
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
                 viewModel.createUser(email, password)

@@ -36,9 +36,12 @@ class LoginFragment : Fragment() {
         btn_login_login.setOnClickListener { onLoginClick() }
     }
 
+    /**
+     * Logs in user with given email & password. Trims it else it will crash the app
+     */
     private fun onLoginClick() {
-        val email = email_login_txt.text.toString()
-        val password = password_login_text.text.toString()
+        val email = email_login_txt.text.toString().trim()
+        val password = password_login_text.text.toString().trim()
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
                 Log.d("Password", "$password")
@@ -49,6 +52,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /**
+     * Simple check for email if it contains an @ and if its not empty / null
+     */
     private fun checkEmailValidation(email: String): Boolean {
         return if (email.isNullOrBlank() || !email.contains("@")) {
             Toast.makeText(context, R.string.emailInvalidation, Toast.LENGTH_LONG).show()
@@ -58,6 +64,10 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /**
+     * Simple check for password minimum length needs to be 8 and must not be empty.
+     * Shows toast if not valid
+     */
     private fun checkPasswordValidation(password: String): Boolean {
         return if (password.isNullOrBlank() || password.length < 8) {
             Toast.makeText(context, R.string.passwordInvalidation, Toast.LENGTH_LONG).show()

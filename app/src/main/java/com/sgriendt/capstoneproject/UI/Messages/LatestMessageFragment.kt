@@ -8,11 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.sgriendt.capstoneproject.Model.ChatMessage
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
@@ -44,6 +51,7 @@ class LatestMessageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getLatestMessage()
         observeMessagesAreFetched()
+
     }
 
     private fun observeMessagesAreFetched() {
@@ -53,13 +61,14 @@ class LatestMessageFragment : Fragment() {
     }
 
     private fun retrieveLatestMessage() {
-
-        var adapter: GroupAdapter<GroupieViewHolder>
+        val adapter: GroupAdapter<GroupieViewHolder>
         val messages = viewModel.latestMessage
         adapter = messages.value!!
-//        messages.value!!.clear()
         rv_latest_messages.layoutManager = LinearLayoutManager(activity)
+        rv_latest_messages.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         rv_latest_messages.adapter = adapter
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -82,14 +91,3 @@ class LatestMessageFragment : Fragment() {
 
 }
 
-class LatestItemRow(val chatMessage: ChatMessage) : Item<GroupieViewHolder>() {
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.itemView.message_textview_latest_message.text = chatMessage.text
-
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.latest_message
-    }
-
-}
