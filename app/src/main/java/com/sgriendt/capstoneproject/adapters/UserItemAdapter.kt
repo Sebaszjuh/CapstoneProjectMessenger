@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.sgriendt.capstoneproject.Interfaces.OnUserClickListener
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.squareup.picasso.Picasso
@@ -14,9 +15,7 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun databind(userInfo: UserInfo) {
-
-        }
+        fun databind() {}
 
         fun initialize(item: UserInfo, action: OnUserClickListener) {
             itemView.message_user_from.text = item.username
@@ -40,9 +39,4 @@ class UserItemAdapter(private val users: List<UserInfo>, var clickListener: OnUs
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.initialize(users.get(position), clickListener)
     }
-
-}
-
-interface OnUserClickListener {
-    fun onUserClick(item: UserInfo, position: Int)
 }

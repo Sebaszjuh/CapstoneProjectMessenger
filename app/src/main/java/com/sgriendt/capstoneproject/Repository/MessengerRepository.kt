@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.sgriendt.capstoneproject.DateUtils.DateUtilities
 import com.sgriendt.capstoneproject.Interfaces.*
 import com.sgriendt.capstoneproject.Model.*
 import com.xwray.groupie.GroupAdapter
@@ -16,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -214,15 +214,16 @@ class MessengerRepository {
         })
     }
 
+    /**
+     * Retrieves current user from Firebase and returns it in callback
+     */
     private fun getCurrentUser(firebaseCurrentUserCallBack: FirebaseCurrentUserCallBack) {
         currentUser1 == null
         val uid = firestoreAuth.uid
-        Log.d("test", uid.toString())
         val ref = firebaseDatabase.getReference("/users/$uid")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 currentUser1 = snapshot.getValue(UserInfo::class.java)
-                Log.d("currentuser", currentUser1.toString())
                 firebaseCurrentUserCallBack.onCallback(currentUser1!!)
             }
 
@@ -230,6 +231,9 @@ class MessengerRepository {
         })
     }
 
+    /**
+     * Retrieves all messages of chat of user and messagepartner. Also swaps timestamp into readable time
+     */
     private fun getMessages(
         firebaseMessagesCallback: FirebaseMessagesCallbackGroup,
         user: UserInfo
@@ -248,7 +252,7 @@ class MessengerRepository {
                         ChatFrom(
                             chatMessage?.text!!,
                             toUser,
-                            DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)
+                            DateUtilities.fromMillisToTimeString(chatMessage.timestamp)
                         )
                     )
                 } else {
@@ -256,7 +260,7 @@ class MessengerRepository {
                         ChatTo(
                             chatMessage?.text!!,
                             currentUser!!,
-                            DateUtilitites.fromMillisToTimeString(chatMessage.timestamp)
+                            DateUtilities.fromMillisToTimeString(chatMessage.timestamp)
                         )
                     )
                 }
@@ -271,13 +275,19 @@ class MessengerRepository {
 
     }
 
+    /**
+     * Retrieves all users from the database which are registered.
+     */
     private fun retrieveUsers(firebaseCallback: FirebaseCallback) {
         userItems.clear()
         refUsers.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     val user = it.getValue(UserInfo::class.java)
-                    userItems.add(user!!)
+                    if(user?.uid != FirebaseAuth.getInstance().uid){
+                        userItems.add(user!!)
+                    }
+
                 }
                 firebaseCallback.onCallback(userItems)
             }
@@ -287,8 +297,11 @@ class MessengerRepository {
         })
     }
 
+    /**
+     * Callback method to get the latest message
+     */
     fun callbackLatestMessage() {
-//        _latestMessage.value?.clear()
+        _latestMessage.value?.clear()
         getLatestMessage(object : FirebaseLatestMessageCallBack {
             override fun onCallBack(latestMessages: GroupAdapter<GroupieViewHolder>) {
                 _latestMessage.value = latestMessages
@@ -298,6 +311,9 @@ class MessengerRepository {
     }
 
 
+    /**
+     * Retrieves latestmessage from firebase has two methods which are used. onChildAdded is at first creation of latestmessages, onChildChanged is updating the existing message in the screen.
+     */
     private fun getLatestMessage(firebaseCallBack: FirebaseLatestMessageCallBack) {
         val userId = firestoreAuth.uid
         val ref = firebaseDatabase.getReference("/latest-messages/$userId")
@@ -329,6 +345,9 @@ class MessengerRepository {
         })
     }
 
+    /**
+     * Sends message to the node of user and chatpartner so that both update.
+     */
     fun sendMessage(text: String, toId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val userId = firestoreAuth.uid ?: return@launch
@@ -348,6 +367,9 @@ class MessengerRepository {
         }
     }
 
+    /**
+     * Error message classes used if something goes wrong
+     */
     class UserSaveError(message: String, cause: Throwable) : Exception(message, cause)
     class UserLoginError(message: String, cause: Throwable) : Exception(message, cause)
     class UploadImageError(message: String, cause: Throwable) : Exception(message, cause)
@@ -355,9 +377,4 @@ class MessengerRepository {
     class UserMessageError(message: String, cause: Throwable) : Exception(message, cause)
 }
 
-object DateUtilitites {
-    fun fromMillisToTimeString(millis: Long): String {
-        val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        return format.format(millis)
-    }
-}
+

@@ -14,11 +14,13 @@
         android:layout_marginBottom="8dp"
         android:background="@android:color/white"
         android:ems="10"
-        android:hint="Enter Message.."
+        android:hint="@string/enterMessage"
         android:inputType="textPersonName"
+        android:paddingLeft="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_button_chat_log"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_chat_log" />
 
     <Button
         android:id="@+id/send_button_chat_log"
@@ -26,11 +28,13 @@
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_button"
-        android:text="Send"
+        android:text="@string/send"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_text_chat_log"
+        app:layout_constraintTop_toBottomOf="@+id/rv_chat_log" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chat_log"

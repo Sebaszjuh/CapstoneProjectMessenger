@@ -1,14 +1,12 @@
-package com.sgriendt.capstoneproject
+package com.sgriendt.capstoneproject.UI.Main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.sgriendt.capstoneproject.R
 
 class MainActivity : AppCompatActivity() {
 

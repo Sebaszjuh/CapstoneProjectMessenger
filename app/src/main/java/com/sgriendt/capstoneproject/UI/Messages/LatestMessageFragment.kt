@@ -1,7 +1,6 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -26,7 +25,7 @@ class LatestMessageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         activity?.title = "Chats"
-
+        viewModel.getLatestMessage()
         return inflater.inflate(R.layout.fragment_latest_message, container, false)
     }
 
@@ -38,7 +37,7 @@ class LatestMessageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getLatestMessage()
+
         observeMessagesAreFetched()
     }
 
@@ -73,7 +72,7 @@ class LatestMessageFragment : Fragment() {
     }
 
     /**
-     * Retrieves the actual messages and sets the adapter to the latestmessages
+     * Retrieves the actual messages and sets the adapter to the latestmessages if one of the rows is clicked it directs it to the correct message
      */
     private fun retrieveLatestMessage() {
         val adapter: GroupAdapter<GroupieViewHolder>
@@ -85,7 +84,6 @@ class LatestMessageFragment : Fragment() {
 
 
         adapter.setOnItemClickListener { item, view ->
-            Log.d("TAG", "123")
             val bundle = Bundle()
 
             val row = item as LatestItemRow

@@ -1,4 +1,4 @@
-package com.sgriendt.capstoneproject.UI
+package com.sgriendt.capstoneproject.UI.Main
 
 import android.os.Bundle
 import android.util.Log
@@ -23,17 +23,16 @@ class StartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         activity?.title = "Start"
-        viewModel.checkLogin()
+        if(FirebaseAuth.getInstance().uid != null){
+            findNavController().navigate(R.id.latestMessageFragment)
+        }
 
         return inflater.inflate(R.layout.fragment_start, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        observeUserLoggedOut()
-        observeUserLoggedIn()
 
         btn_login_start.setOnClickListener { onLoginClick() }
         btn_login_register.setOnClickListener { onRegisterClick() }
@@ -50,20 +49,5 @@ class StartFragment : Fragment() {
     private fun onRegisterClick() {
         findNavController().navigate(R.id.registerFragment)
     }
-
-    private fun observeUserLoggedIn() {
-        viewModel.isLoggedin.observe(viewLifecycleOwner, Observer {
-            if(it == true){
-                findNavController().navigate(R.id.latestMessageFragment)
-            }
-
-        })
-    }
-//
-//    private fun observeUserLoggedOut(){
-//        viewModel.isLoggedOut.observe(viewLifecycleOwner, Observer{
-//            findNavController().navigate(R.id.loginFragment)
-//        })
-//    }
 
 }

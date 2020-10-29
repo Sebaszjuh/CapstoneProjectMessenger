@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sgriendt.capstoneproject.adapters.OnUserClickListener
+import com.sgriendt.capstoneproject.Interfaces.OnUserClickListener
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.adapters.UserItemAdapter
 import com.sgriendt.capstoneproject.R

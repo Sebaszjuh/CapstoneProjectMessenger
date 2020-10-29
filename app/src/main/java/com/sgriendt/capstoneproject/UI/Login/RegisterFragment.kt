@@ -40,7 +40,7 @@ class RegisterFragment : Fragment() {
         btn_register.setOnClickListener { registerNewAccount() }
 
         observeUserCreation()
-        observeUserFailure()
+//        observeUserFailure()
     }
 
     private fun goToLogin() {
@@ -49,6 +49,9 @@ class RegisterFragment : Fragment() {
 
     //TODO RETURN MESSAGE IF EMAILADDRESS IS ALREADY IN USE
 
+    /**
+     * Method retrieves data from input fields and sends it to repo through viewmodel.
+     */
     private fun registerNewAccount() {
         val email = email_edit_txt_reg.text.toString().trim()
         val password = password_edit_txt_reg.text.toString().trim()
@@ -72,12 +75,15 @@ class RegisterFragment : Fragment() {
         })
     }
 
-    private fun observeUserFailure() {
-        viewModel.createFailure.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(activity, R.string.failure, Toast.LENGTH_LONG).show()
-        })
-    }
+//    private fun observeUserFailure() {
+//        viewModel.createFailure.observe(viewLifecycleOwner, Observer {
+//            Toast.makeText(activity, R.string.failure, Toast.LENGTH_LONG).show()
+//        })
+//    }
 
+    /**
+     * Opens gallery of users phone
+     */
     private fun onGalleryClick() {
         val galleryIntent = Intent(Intent.ACTION_PICK)
         galleryIntent.type = "image/*"
@@ -85,6 +91,9 @@ class RegisterFragment : Fragment() {
     }
 
     //DEPRECATED NEEDS REWORK
+    /**
+     * Method for selecting picture while making a new user
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
@@ -100,7 +109,7 @@ class RegisterFragment : Fragment() {
     }
 
     /**
-     * Methods
+     * Method checks input from user if email contains @ and is not empty. Shows toast is its not valid
      */
     private fun checkEmailValidation(email: String): Boolean {
         return if (email.isNullOrBlank() || !email.contains("@")) {
@@ -110,6 +119,10 @@ class RegisterFragment : Fragment() {
             true
         }
     }
+
+    /**
+     * Methods checks input from user if password is more at least 8 characters and is not empty. Shows toast if its not valid
+     */
 
     private fun checkPasswordValidation(password: String): Boolean {
         return if (password.isNullOrBlank() || password.length < 8) {

@@ -40,6 +40,9 @@ class ChatLogFragment : Fragment() {
         }
     }
 
+    /**
+     * Method that gets called on creation of fragment. Retrieves the messages from firebase through the viewmodel. Also adds user to the viewmodel to relais to repo
+     */
     @SuppressLint("UseRequireInsteadOfGet")
     private fun retrieveMessages() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
@@ -64,12 +67,18 @@ class ChatLogFragment : Fragment() {
         }
     }
 
+    /**
+     * Observes if messages are done ( asynchronous loading ) If so calls actual retrieval of messages
+     */
     private fun observeMessagesAreFetched() {
         viewModel.fetchedMessages.observe(viewLifecycleOwner, Observer {
             getMessagesFromdatabase()
         })
     }
 
+    /**
+     * Actual retrieval of messages of database. Adds them to an adapter to show
+     */
     private fun getMessagesFromdatabase() {
         val adapter: GroupAdapter<GroupieViewHolder>
         val messages = viewModel.groupAdapter
