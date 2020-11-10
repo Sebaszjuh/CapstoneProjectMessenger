@@ -37,7 +37,7 @@ class MessengerRepository {
 
     private val _createSuccess: MutableLiveData<Boolean> = MutableLiveData()
     private val _registerProfile: MutableLiveData<Boolean> = MutableLiveData()
-    private val _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
+    private var _isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
     private val _fetchedUsers: MutableLiveData<Boolean> = MutableLiveData()
     private val _userItems1: MutableLiveData<ArrayList<UserInfo>> = MutableLiveData()
     private val _fetchedMessages: MutableLiveData<Boolean> = MutableLiveData()
@@ -47,6 +47,8 @@ class MessengerRepository {
     private val _messageSendSuccesful: MutableLiveData<Boolean> = MutableLiveData()
     private val _latestMessagesFetched: MutableLiveData<Boolean> = MutableLiveData()
     private val _createFailure: MutableLiveData<Boolean> = MutableLiveData()
+    private val _loginFailure: MutableLiveData<Boolean> = MutableLiveData()
+
     private val latestMessageHashMap = HashMap<String, ChatMessage>()
 
     val getMessageSendSuccesful
@@ -72,6 +74,9 @@ class MessengerRepository {
 
     val createFailure: LiveData<Boolean>
         get() = _createFailure
+
+    val loginFailure: LiveData<Boolean>
+        get() = _loginFailure
 
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
@@ -104,10 +109,18 @@ class MessengerRepository {
     }
 
     suspend fun signInUser(user: User) {
-        firestoreAuth.signInWithEmailAndPassword(user.email, user.password)
-            .addOnCompleteListener {
-                if (!it.isSuccessful) return@addOnCompleteListener
-            }.await()
+        try {
+            withTimeout(5_000) {
+                firestoreAuth.signInWithEmailAndPassword(user.email, user.password)
+                    .addOnCompleteListener {
+                        if (!it.isSuccessful) return@addOnCompleteListener
+                        _isLoggedIn.value = true
+                    }.await()
+            }
+        } catch (e: Exception) {
+            _loginFailure.value = true
+            throw UserLoginError(e.message.toString(), e)
+        }
     }
 
     /**
@@ -116,7 +129,7 @@ class MessengerRepository {
     fun signOut() {
         firestoreAuth.signOut()
         val uid = FirebaseAuth.getInstance().uid
-        _isLoggedIn.value = false
+//        _isLoggedIn.value = false
         Log.d("LOGGED OUT UID", "$uid")
     }
 
@@ -128,8 +141,7 @@ class MessengerRepository {
         val uid = FirebaseAuth.getInstance().uid
         if (uid == null) {
             Log.d("UID", "UID ME $uid")
-//            _isNotLoggedIn.value = true
-            _isLoggedIn.value = false
+//            _isLoggedIn.value = false
         }
     }
 
@@ -284,7 +296,7 @@ class MessengerRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     val user = it.getValue(UserInfo::class.java)
-                    if(user?.uid != FirebaseAuth.getInstance().uid){
+                    if (user?.uid != FirebaseAuth.getInstance().uid) {
                         userItems.add(user!!)
                     }
 

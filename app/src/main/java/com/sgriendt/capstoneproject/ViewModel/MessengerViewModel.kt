@@ -18,11 +18,11 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     private val TAG = "FIRESTORE"
     private val messengerRepository: MessengerRepository = MessengerRepository()
 
-    private val _errorText: MutableLiveData<String> = MutableLiveData()
+    val _errorText: MutableLiveData<String> = MutableLiveData()
 
     val createSuccess: LiveData<Boolean> = messengerRepository.createSuccess
     val createFailure: LiveData<Boolean> = messengerRepository.createFailure
-    val isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
+    var isLoggedin: LiveData<Boolean> = messengerRepository.isLoggedIn
     val userItems: LiveData<ArrayList<UserInfo>> = messengerRepository.getUserItems
     val fetchedUsers: LiveData<Boolean> = messengerRepository.isFetchedUsers
     val latestMessageFetched: LiveData<Boolean> = messengerRepository.latestMessagesFetched
@@ -30,6 +30,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
     val groupAdapter: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getGroupAdapter
     val latestMessage: LiveData<GroupAdapter<GroupieViewHolder>> = messengerRepository.getLatestMessage
     val succesfulSendMessage: LiveData<Boolean> = messengerRepository.getMessageSendSuccesful
+    val loginFailure: LiveData<Boolean> = messengerRepository.loginFailure
 
     fun createUser(email: String, password: String) {
         val user = User(email, password)
@@ -60,7 +61,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (ex: MessengerRepository.UserLoginError) {
                 val errorMsg = "Something went wrong while logging in"
                 Log.e(TAG, ex.message ?: errorMsg)
-                _errorText.value = errorMsg
+                _errorText.value = ex.message
             }
         }
     }

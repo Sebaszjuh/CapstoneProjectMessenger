@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -31,6 +33,9 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btn_login_login.setOnClickListener { onLoginClick() }
+        observeUserLoggedInFailure()
+        observeUserLoggedIn()
+
     }
 
     /**
@@ -44,9 +49,27 @@ class LoginFragment : Fragment() {
                 Log.d("Password", "$password")
                 Log.d("email", "$email")
                 viewModel.loginUser(email, password)
-                findNavController().navigate(R.id.latestMessageFragment)
             }
         }
+        if(FirebaseAuth.getInstance().uid != null){
+            findNavController().navigate(R.id.latestMessageFragment)
+        }
+    }
+
+    private fun observeUserLoggedIn(){
+        viewModel.isLoggedin.observe(viewLifecycleOwner, Observer {
+            findNavController().navigate(R.id.latestMessageFragment)
+
+        })
+
+    }
+
+    private fun observeUserLoggedInFailure(){
+        viewModel.loginFailure.observe(viewLifecycleOwner, Observer {
+           Toast.makeText(context,viewModel._errorText.value , Toast.LENGTH_LONG).show()
+        })
+
+        viewModel._errorText.value = null
     }
 
     /**
