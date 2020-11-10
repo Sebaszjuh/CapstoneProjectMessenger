@@ -54,7 +54,8 @@ class LatestMessageFragment : Fragment() {
                 findNavController().navigate(R.id.newMessageFragment)
             }
             android.R.id.home -> {
-                findNavController().navigateUp()
+                viewModel.signOut()
+                findNavController().navigate(R.id.startFragment)
             }
         }
         return super.onOptionsItemSelected(item)
