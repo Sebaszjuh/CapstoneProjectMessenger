@@ -3,11 +3,13 @@ package com.sgriendt.capstoneproject.UI.Messages
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
@@ -39,6 +41,16 @@ class ChatLogFragment : Fragment() {
             sendMessage()
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().navigateUp()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     /**
      * Method that gets called on creation of fragment. Retrieves the messages from firebase through the viewmodel. Also adds user to the viewmodel to relais to repo

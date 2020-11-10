@@ -53,6 +53,9 @@ class LatestMessageFragment : Fragment() {
             R.id.menu_new_message -> {
                 findNavController().navigate(R.id.newMessageFragment)
             }
+            android.R.id.home -> {
+                findNavController().navigateUp()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

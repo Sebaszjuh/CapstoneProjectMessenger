@@ -2,6 +2,7 @@ package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
@@ -11,9 +12,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgriendt.capstoneproject.Interfaces.OnUserClickListener
 import com.sgriendt.capstoneproject.Model.UserInfo
-import com.sgriendt.capstoneproject.adapters.UserItemAdapter
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
+import com.sgriendt.capstoneproject.adapters.UserItemAdapter
 import kotlinx.android.synthetic.main.fragment_new_message.*
 
 class NewMessageFragment : Fragment(), OnUserClickListener {
@@ -30,9 +31,11 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         viewModel.fetchUsers()
+
     }
     // popBackstack om terug te ganan?
     override fun onUserClick(item: UserInfo, position: Int) {
@@ -48,7 +51,7 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_new_message -> {
+            android.R.id.home -> {
                 findNavController().navigateUp()
             }
         }
@@ -56,7 +59,10 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
+
         inflater.inflate(R.menu.menu_new_messages, menu)
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
