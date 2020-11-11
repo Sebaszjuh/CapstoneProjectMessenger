@@ -1,6 +1,7 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -37,7 +38,7 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
         viewModel.fetchUsers()
 
     }
-    // popBackstack om terug te ganan?
+
     override fun onUserClick(item: UserInfo, position: Int) {
         val bundle = Bundle()
         bundle.putParcelable("usernameSelected", userList[position])
@@ -52,7 +53,7 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                findNavController().navigateUp()
+                findNavController().popBackStack(R.id.latestMessageFragment, true)
             }
         }
         return super.onOptionsItemSelected(item)

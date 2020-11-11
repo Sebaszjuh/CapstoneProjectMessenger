@@ -29,4 +29,6 @@
     <!--    validation checks-->
     <string name="emailInvalidation">Email is not correct, try again</string>
     <string name="passwordInvalidation">Password needs to be atleast 8 characters</string>
+
+    <string name="unavailable">Messages are unavailable</string>
 </resources>

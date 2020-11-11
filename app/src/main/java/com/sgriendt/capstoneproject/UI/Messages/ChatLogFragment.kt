@@ -2,10 +2,12 @@ package com.sgriendt.capstoneproject.UI.Messages
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -14,11 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgriendt.capstoneproject.Model.UserInfo
 import com.sgriendt.capstoneproject.R
 import com.sgriendt.capstoneproject.ViewModel.MessengerViewModel
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
-import kotlinx.android.synthetic.main.chat_to_row.view.*
 import kotlinx.android.synthetic.main.fragment_chat_log.*
 
 class ChatLogFragment : Fragment() {
@@ -42,14 +41,16 @@ class ChatLogFragment : Fragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                findNavController().navigateUp()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            android.R.id.home -> {
+//                Log.d("TAG", " chatlogfragment")
+//                findNavController().navigateUp()
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
 
     /**
@@ -98,13 +99,19 @@ class ChatLogFragment : Fragment() {
         adapterThing = adapter
         rv_chat_log.layoutManager = LinearLayoutManager(activity)
         rv_chat_log.adapter = adapter
+
     }
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun init() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!
         observeMessagesAreFetched()
-        activity?.title = user.username
+        if(user != null){
+            activity?.title = user.username
+        } else {
+            activity?.title = "Username unknown"
+        }
+
     }
 
     /**

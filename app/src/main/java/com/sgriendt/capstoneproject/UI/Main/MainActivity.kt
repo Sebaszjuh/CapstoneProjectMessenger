@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.navigation.findNavController
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sgriendt.capstoneproject.R
+import androidx.navigation.fragment.findNavController
 
 class MainActivity : AppCompatActivity() {
 

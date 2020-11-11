@@ -141,7 +141,6 @@ class MessengerRepository {
         val uid = FirebaseAuth.getInstance().uid
         if (uid == null) {
             Log.d("UID", "UID ME $uid")
-//            _isLoggedIn.value = false
         }
     }
 
