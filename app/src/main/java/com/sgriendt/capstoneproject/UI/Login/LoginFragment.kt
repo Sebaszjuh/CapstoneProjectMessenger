@@ -62,8 +62,6 @@ class LoginFragment : Fragment() {
         val password = password_login_text.text.toString().trim()
         if (checkEmailValidation(email)) {
             if (checkPasswordValidation(password)) {
-                Log.d("Password", "$password")
-                Log.d("email", "$email")
                 viewModel.loginUser(email, password)
             }
         }

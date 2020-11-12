@@ -91,12 +91,6 @@ class RegisterFragment : Fragment() {
         })
     }
 
-//    private fun observeUserFailure() {
-//        viewModel.createFailure.observe(viewLifecycleOwner, Observer {
-//            Toast.makeText(activity, R.string.failure, Toast.LENGTH_LONG).show()
-//        })
-//    }
-
     /**
      * Opens gallery of users phone
      */

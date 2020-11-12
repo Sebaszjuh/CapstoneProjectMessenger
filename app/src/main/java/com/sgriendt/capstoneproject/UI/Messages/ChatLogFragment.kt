@@ -2,12 +2,10 @@ package com.sgriendt.capstoneproject.UI.Messages
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -32,8 +30,15 @@ class ChatLogFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_chat_log, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         init()
         retrieveMessages()
         send_button_chat_log.setOnClickListener {
@@ -41,16 +46,14 @@ class ChatLogFragment : Fragment() {
         }
     }
 
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            android.R.id.home -> {
-//                Log.d("TAG", " chatlogfragment")
-//                findNavController().navigateUp()
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().popBackStack(R.id.latestMessageFragment, true)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 
     /**

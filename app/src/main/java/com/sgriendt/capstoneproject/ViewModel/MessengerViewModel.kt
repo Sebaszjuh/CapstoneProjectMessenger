@@ -56,7 +56,6 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         val user = User(email, password)
         viewModelScope.launch {
             try {
-                Log.d(TAG, "FIRES VIEW LOGIN")
                 messengerRepository.signInUser(user)
             } catch (ex: MessengerRepository.UserLoginError) {
                 val errorMsg = "Something went wrong while logging in"
