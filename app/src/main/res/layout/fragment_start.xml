@@ -52,5 +52,5 @@
         app:layout_constraintStart_toStartOf="@+id/btn_login_start"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@mipmap/ic_capstoneProject" />
+        app:srcCompat="@mipmap/ic_capstoneproject" />
 </androidx.constraintlayout.widget.ConstraintLayout>
