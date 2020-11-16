@@ -128,20 +128,6 @@ class MessengerRepository {
      */
     fun signOut() {
         firestoreAuth.signOut()
-        val uid = FirebaseAuth.getInstance().uid
-//        _isLoggedIn.value = false
-        Log.d("LOGGED OUT UID", "$uid")
-    }
-
-    /**
-     * Method checks if user is still logged in. Done by checking the uid. If not logged in returns a livedata variable which is observable in the fragment
-     * @param uid userid received from firebase
-     */
-    fun checkIfLoggedIn() {
-        val uid = FirebaseAuth.getInstance().uid
-        if (uid == null) {
-            Log.d("UID", "UID ME $uid")
-        }
     }
 
     /**

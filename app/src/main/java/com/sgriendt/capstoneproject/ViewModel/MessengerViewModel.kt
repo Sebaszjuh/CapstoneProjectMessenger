@@ -120,12 +120,6 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun checkLogin() {
-        viewModelScope.launch {
-            messengerRepository.checkIfLoggedIn()
-        }
-    }
-
     fun signOut() {
         viewModelScope.launch {
             messengerRepository.signOut()
