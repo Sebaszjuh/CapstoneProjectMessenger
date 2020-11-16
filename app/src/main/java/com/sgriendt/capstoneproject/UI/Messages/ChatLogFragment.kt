@@ -105,6 +105,9 @@ class ChatLogFragment : Fragment() {
 
     }
 
+    /**
+     * Sets the title of the fragment as the username.
+     */
     @SuppressLint("UseRequireInsteadOfGet")
     private fun init() {
         val user: UserInfo = arguments!!.getParcelable("usernameSelected")!!

@@ -1,9 +1,7 @@
 package com.sgriendt.capstoneproject.UI.Messages
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
@@ -60,13 +58,13 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-
-
         inflater.inflate(R.menu.menu_new_messages, menu)
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    /**
+     * Retrieves users after being called by the observer method and adds the users to the adapter
+     */
     private fun getUserFromDatabase() {
         var users: LiveData<ArrayList<UserInfo>>? = null
         users?.value?.clear()
@@ -94,6 +92,9 @@ class NewMessageFragment : Fragment(), OnUserClickListener {
         observeUsersAreFetched()
     }
 
+    /**
+     * Observes if users are fetched and then calls the actual retrieval.
+     */
     private fun observeUsersAreFetched() {
         viewModel.fetchedUsers.observe(viewLifecycleOwner, Observer {
             getUserFromDatabase()

@@ -41,7 +41,6 @@ class RegisterFragment : Fragment() {
         btn_register.setOnClickListener { registerNewAccount() }
 
         observeUserCreation()
-//        observeUserFailure()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +61,6 @@ class RegisterFragment : Fragment() {
     private fun goToLogin() {
         findNavController().navigate(R.id.loginFragment)
     }
-
-    //TODO RETURN MESSAGE IF EMAILADDRESS IS ALREADY IN USE
 
     /**
      * Method retrieves data from input fields and sends it to repo through viewmodel.
@@ -100,7 +97,6 @@ class RegisterFragment : Fragment() {
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
     }
 
-    //DEPRECATED NEEDS REWORK
     /**
      * Method for selecting picture while making a new user
      */

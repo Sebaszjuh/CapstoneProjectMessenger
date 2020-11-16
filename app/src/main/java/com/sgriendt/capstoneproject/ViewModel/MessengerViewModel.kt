@@ -115,7 +115,7 @@ class MessengerViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 messengerRepository.getData()
             } catch (e: Exception) {
-                Log.d(TAG, "BROKEN")
+                Log.d(TAG, e.toString())
             }
         }
     }

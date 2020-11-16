@@ -46,6 +46,9 @@ class StartFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    /**
+     * Makes back button exit the application
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -55,7 +58,9 @@ class StartFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-
+    /**
+     * If firebase returns an UID this methods navigates to latestMessage fragment else to login
+     */
     private fun onLoginClick() {
         if(FirebaseAuth.getInstance().uid == null){
             findNavController().navigate(R.id.loginFragment)
