@@ -41,8 +41,6 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         btn_login_login.setOnClickListener { onLoginClick() }
         observeUserLoggedInFailure()
-        observeUserLoggedIn()
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -66,16 +64,9 @@ class LoginFragment : Fragment() {
             }
         }
         if(FirebaseAuth.getInstance().uid != null){
+            viewModel.latestMessage.value!!.clear()
             findNavController().navigate(R.id.latestMessageFragment)
         }
-    }
-
-    private fun observeUserLoggedIn(){
-        viewModel.isLoggedin.observe(viewLifecycleOwner, Observer {
-            findNavController().navigate(R.id.latestMessageFragment)
-
-        })
-
     }
 
     private fun observeUserLoggedInFailure(){

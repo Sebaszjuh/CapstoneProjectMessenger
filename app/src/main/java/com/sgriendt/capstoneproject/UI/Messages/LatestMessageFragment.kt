@@ -48,6 +48,7 @@ class LatestMessageFragment : Fragment() {
         when (item.itemId) {
             R.id.menu_sign_out -> {
                 viewModel.signOut()
+                viewModel.latestMessage.value!!.clear()
                 findNavController().navigate(R.id.startFragment)
             }
             R.id.menu_new_message -> {
@@ -85,7 +86,6 @@ class LatestMessageFragment : Fragment() {
         rv_latest_messages.layoutManager = LinearLayoutManager(activity)
         rv_latest_messages.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         rv_latest_messages.adapter = adapter
-
 
         adapter.setOnItemClickListener { item, view ->
             val bundle = Bundle()
